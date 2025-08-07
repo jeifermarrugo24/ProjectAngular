@@ -13,6 +13,7 @@ RewriteRule ^guardarDatosUsuario$ services_user.php?accion=guardar [L,QSA]
 RewriteRule ^consultarDatosUsuario$ services_user.php?accion=consultar [L,QSA]
 RewriteRule ^eliminarDatosUsuario$ services_user.php?accion=eliminar [L,QSA]
 RewriteRule ^editarDatosUsuario$ services_user.php?accion=editar [L,QSA]
+RewriteRule ^loginUser$ services_user.php?accion=login [L,QSA]
 
 # Reescritura de endpoints para categorías
 RewriteRule ^guardarDatosCategoria$ services_categories.php?accion=guardar [L,QSA]

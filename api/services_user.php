@@ -56,6 +56,9 @@ switch ($accion) {
     case 'editar':
         update_users($data, $conn);
         break;
+    case 'login':
+        login_user($data, $conn);
+        break;
     default:
         http_response_code(400);
         echo json_encode(['error' => 'Acción no válida']);
@@ -194,6 +197,42 @@ function update_users($data, $conn)
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error al editar el usuario', 'detalle' => $e->getMessage()]);
+    }
+}
+
+function login_user($data, $conn)
+{
+    $usuario_nombres = $data['usuario_nombres'] ?? '';
+    $usuario_apellidos = $data['usuario_apellidos'] ?? '';
+
+    if (!$usuario_nombres || !$usuario_apellidos) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Todos los campos son obligatorios']);
+        return;
+    }
+
+    try {
+        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario_nombres = :usuario_nombres AND usuario_apellidos = :usuario_apellidos");
+        $stmt->bindParam(':usuario_nombres', $usuario_nombres);
+        $stmt->bindParam(':usuario_apellidos', $usuario_apellidos);
+        $stmt->execute();
+
+        $datos = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$datos) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Credenciales no validas']);
+            return;
+        }
+
+        // Aquí podrías generar un token JWT real. Por simplicidad, devolvemos un token estático.
+        $token = base64_encode(json_encode(['usuario_id' => $datos['usuario_id'], 'usuario_nombres' => $datos['usuario_nombres']]));
+
+        http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Login exitoso', 'token' => $token]);
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Error al procesar el login', 'detalle' => $e->getMessage()]);
     }
 }
 
