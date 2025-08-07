@@ -7,6 +7,7 @@ import { ProductsComponent } from "../../products/products.component";
 import { RegistrarComponent as UserRegistrarComponent } from "../../users/registrar/registrar.component";
 
 export const AdminLayoutRoutes: Routes = [
+  { path: "", redirectTo: "dashboard", pathMatch: "full" },
   { path: "dashboard", component: DashboardComponent },
   { path: "users", component: UsersComponent },
   { path: "users/registrar", component: UserRegistrarComponent },

@@ -125,7 +125,21 @@ export class AuthService {
   }
 
   redirectToDashboard(): void {
-    this.router.navigate(["/dashboard"]);
+    console.log("=== REDIRECCIONAR AL DASHBOARD ===");
+    console.log("Intentando navegar a /dashboard");
+
+    this.router
+      .navigate(["/dashboard"])
+      .then((success) => {
+        if (success) {
+          console.log("✅ Navegación exitosa al dashboard");
+        } else {
+          console.error("❌ Error en la navegación al dashboard");
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Error en la navegación:", error);
+      });
   }
 
   // Método para renovar token si es necesario

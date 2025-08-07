@@ -64,6 +64,7 @@ export class AppComponent implements OnInit {
             alert(`¡Bienvenido! ${response.message}`);
 
             // Redirigir al dashboard
+            console.log("=== INICIANDO REDIRECCIÓN AL DASHBOARD ===");
             this.authService.redirectToDashboard();
           } else {
             // Error en credenciales
