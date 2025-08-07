@@ -5,6 +5,7 @@ import { UsersComponent } from "../../users/users.component";
 import { CategoriesComponent } from "../../categories/categories.component";
 import { ProductsComponent } from "../../products/products.component";
 import { RegistrarComponent as UserRegistrarComponent } from "../../users/registrar/registrar.component";
+import { MenusComponent } from "app/menus/menus.component";
 
 export const AdminLayoutRoutes: Routes = [
   { path: "", redirectTo: "dashboard", pathMatch: "full" },
@@ -16,4 +17,6 @@ export const AdminLayoutRoutes: Routes = [
   { path: "menus", component: DashboardComponent },
   { path: "roles", component: DashboardComponent },
   { path: "permisos", component: DashboardComponent },
+  { path: "menus", component: MenusComponent },
+  { path: "menus/registrar", component: MenusComponent },
 ];
