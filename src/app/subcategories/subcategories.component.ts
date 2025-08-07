@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SubcategorieService } from "../services/subcategories/subcategorie.service";
+import { SubcategorieService } from "../services/subcategories/subcategories.service";
 import { Subcategorie } from "../models/subcategorie.model";
 
 @Component({
@@ -8,10 +8,19 @@ import { Subcategorie } from "../models/subcategorie.model";
   styleUrls: ['./subcategories.component.scss']
 })
 export class SubcategoriesComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+  error: string | null = null;
+  subcategories: Subcategorie[] = [];
+  constructor(private subcategorieService: SubcategorieService) {}
+  
+  ngOnInit() {
+    this.subcategorieService.getSubCategorie().subscribe((res) => {
+      if ("data" in res) {
+        this.subcategories = res.data;
+      }
+      if ("error" in res) {
+        this.error = res.error || "Error desconocido";
+      }
+    });
   }
 
 }
