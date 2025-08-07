@@ -1,5 +1,5 @@
 export interface User {
-  usuario_id?: number;         // Opcional porque no se envía al guardar
+  usuario_id?: number; // Opcional porque no se envía al guardar
   usuario_nombres: string;
   usuario_apellidos: string;
   usuario_estado: string;
@@ -20,4 +20,15 @@ export interface SimpleSuccessResponse {
 }
 export interface ErrorResponse {
   error: string;
+}
+
+export interface PerfilInput {
+  value: string;
+  label: string;
+}
+
+export interface EstadoInput {
+  value: string;
+  label: string;
+  icon: string;
 }

@@ -1,18 +1,19 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment }  from '../../../environments/environment';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 import {
   GuardarUserResponse,
   SimpleSuccessResponse,
   ErrorResponse,
   User,
-  ConsultarUserResponse
-} from '../../models/user.model';
+  ConsultarUserResponse,
+} from "../../models/user.model";
+import { ApiResponseModel } from "app/models/response-api.model";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class UserService {
   private apiUrl = `${environment.apiUrl}`;
@@ -20,40 +21,40 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') || '';
+    const token = environment.token || "";
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      Authorization: `${token}`,
+      "Content-Type": "application/json",
     });
   }
 
-  saveUser(user: User): Observable<GuardarUserResponse | ErrorResponse> {
-    return this.http.post<GuardarUserResponse | ErrorResponse>(
-      `${this.apiUrl}/users/save`,
+  saveUser(user: User): Observable<ApiResponseModel<any>> {
+    return this.http.post<ApiResponseModel<any>>(
+      `${this.apiUrl}/guardarDatosUsuario`,
       user,
       { headers: this.getHeaders() }
     );
   }
 
-  getUsers(filtros: Partial<User> = {}): Observable<ConsultarUserResponse | ErrorResponse> {
-    return this.http.post<ConsultarUserResponse | ErrorResponse>(
-      `${this.apiUrl}/users/get`,
+  getUsers(filtros: Partial<User> = {}): Observable<ApiResponseModel<User[]>> {
+    return this.http.post<ApiResponseModel<User[]>>(
+      `${this.apiUrl}/consultarDatosUsuario`,
       filtros,
       { headers: this.getHeaders() }
     );
   }
 
-  deleteUser(id: number): Observable<SimpleSuccessResponse | ErrorResponse> {
-    return this.http.post<SimpleSuccessResponse | ErrorResponse>(
-      `${this.apiUrl}/users/delete`,
+  deleteUser(id: number): Observable<ApiResponseModel<any>> {
+    return this.http.post<ApiResponseModel<any>>(
+      `${this.apiUrl}/eliminarDatosUsuario`,
       { usuario_id: id },
       { headers: this.getHeaders() }
     );
   }
 
-  updateUser(user: User): Observable<SimpleSuccessResponse | ErrorResponse> {
-    return this.http.post<SimpleSuccessResponse | ErrorResponse>(
-      `${this.apiUrl}/users/edit`,
+  updateUser(user: User): Observable<ApiResponseModel<any>> {
+    return this.http.post<ApiResponseModel<any>>(
+      `${this.apiUrl}/editarDatosUsuario`,
       user,
       { headers: this.getHeaders() }
     );
