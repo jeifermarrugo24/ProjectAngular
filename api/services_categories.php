@@ -1,6 +1,6 @@
 <?php
 
-header("Access-Control-Allow-Origin: http://192.168.17.123:4200");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header("Access-Control-Allow-Headers: Authorization, Content-Type");
 
@@ -82,7 +82,7 @@ function save_categories($data, $conn)
         $stmt->execute();
 
         http_response_code(200);
-        echo json_encode(['success' => true, 'message' => 'Categoría guardada correctamente', 'categoria_id' => $conn->lastInsertId()]);
+        echo json_encode(['success' => true, 'message' => 'Categoría guardada correctamente', 'id_registro' => $conn->lastInsertId()]);
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['error' => 'Error al guardar la categoría', 'detalle' => $e->getMessage()]);
