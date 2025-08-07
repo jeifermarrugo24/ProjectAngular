@@ -115,7 +115,7 @@
                                     <label>Categoria</label>
                                     <mat-select formControlName="subcategoria_categoria"
                                         [class.is-invalid]="isFieldInvalid('subcategoria_categoria')">
-                                        <mat-option *ngFor="" [value]="categoria.id">
+                                        <mat-option *ngFor="let categoria of categories" [value]="categoria.id">
                                             {{categoria.nombre}}
                                         </mat-option>
                                     </mat-select>
@@ -167,7 +167,7 @@
             <div class="card">
                 <div class="card-header card-header-info">
                     <h4 class="card-title">Resultados de Búsqueda</h4>
-                    <p class="card-category">Usuarios encontrados: {{searchResults.length}}</p>
+                    <p class="card-category">Subcategorias encontradas: {{searchResults.length}}</p>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -175,33 +175,33 @@
                             <thead class="text-primary">
                                 <tr>
                                     <th>Nombres</th>
-                                    <th>Apellidos</th>
-                                    <th>Perfil</th>
+                                    <th>Cantidad Productos</th>
                                     <th>Estado</th>
+                                    <th>Categoria</th>
                                     <th class="text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let user of searchResults">
-                                    <td>{{user.usuario_nombres}}</td>
-                                    <td>{{user.usuario_apellidos}}</td>
+                                <tr *ngFor="let subcategoria of searchResults">
+                                    <td>{{subcategoria.subcategoria_nombre}}</td>
+                                    <td>{{searchResults.length}}</td>
                                     <td>
-                                        <span class="badge badge-info">{{getPerfilLabel(user.usuario_perfil)}}</span>
+                                        <span class="badge badge-info">{{(subcategoria.subcategoria_categoria)}}</span>
                                     </td>
                                     <td>
                                         <span class="badge"
-                                            [ngClass]="user.usuario_estado === '1' ? 'badge-success' : 'badge-danger'">
-                                            {{getEstadoLabel(user.usuario_estado)}}
+                                            [ngClass]="subcategoria.subcategoria_estado === '1' ? 'badge-success' : 'badge-danger'">
+                                            {{getEstadoLabel(subcategoria.subcategoria_estado)}}
                                         </span>
                                     </td>
                                     <td class="text-right">
                                         <button mat-raised-button color="primary" size="sm"
-                                            class="btn btn-primary btn-sm btn-round" (click)="editUser(user)">
+                                            class="btn btn-primary btn-sm btn-round" (click)="editSubCategoria(subcategoria)">
                                             <i class="material-icons">edit</i>
                                         </button>
                                         <button mat-raised-button color="warn" size="sm"
                                             class="btn btn-danger btn-sm btn-round ml-1"
-                                            (click)="deleteUser(user.usuario_id)">
+                                            (click)="deleteSubcategoria(subcategoria.categoria_id)">
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </td>

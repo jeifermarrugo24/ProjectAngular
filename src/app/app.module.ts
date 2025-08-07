@@ -12,7 +12,6 @@ import { ConfigUserComponent } from "./config-user/config-user.component";
 import { CategoriesComponent } from "./categories/categories.component";
 import { ProductsComponent } from "./products/products.component";
 import { SubcategoriesComponent } from './subcategories/subcategories.component';
-import { RegistrarSubcategoriesComponent } from './subcategories/registrar-subcategories/registrar-subcategories.component';
 
 @NgModule({
   imports: [
@@ -32,7 +31,6 @@ import { RegistrarSubcategoriesComponent } from './subcategories/registrar-subca
     CategoriesComponent,
     ProductsComponent,
     SubcategoriesComponent,
-    RegistrarSubcategoriesComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

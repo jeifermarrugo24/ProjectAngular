@@ -220,7 +220,7 @@ function login_user($data, $conn)
 {
     //cambia todo por usuario_email y usuario_password
     $usuario_email = $data['usuario_email'] ?? '';
-    $usuario_password = $data['usuario_password'] ?? '';
+    $usuario_password = md5($data['usuario_password']) ?? '';
     if (!$usuario_email || !$usuario_password) {
         http_response_code(400);
         echo json_encode(['error' => 'Todos los campos son obligatorios']);

@@ -9,6 +9,7 @@ import { UsersComponent } from "../../users/users.component";
 import { RegistrarComponent } from "../../users/registrar/registrar.component";
 import { RegistrarCategoriesComponent } from "../../categories/registrar-categories/registrar-categories.component";
 import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
+import { RegistrarSubcategoriesComponent } from "../../subcategories/registrar-subcategories/registrar-subcategories.component";
 import { TypographyComponent } from "../../typography/typography.component";
 import { IconsComponent } from "../../icons/icons.component";
 import { MapsComponent } from "../../maps/maps.component";
@@ -43,6 +44,7 @@ import { MatIconModule } from "@angular/material/icon";
     RegistrarComponent,
     RegistrarCategoriesComponent,
     RegistrarProductsComponent,
+    RegistrarSubcategoriesComponent,
     TypographyComponent,
     IconsComponent,
     MapsComponent,

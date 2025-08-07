@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { GeneralStatesModel } from "app/models/common.model";
 import { Subcategorie, EstadoInput } from "app/models/subcategorie.model";
+import { Categories } from "app/models/categories.model";
 import { SubcategorieService } from "app/services/subcategories/subcategories.service";
-import { CategoriesService } from "app/services/categories/categories.service";
 
 @Component({
   selector: "app-subcategories",
@@ -15,6 +15,7 @@ export class RegistrarSubcategoriesComponent implements OnInit {
   subcategorieForm: FormGroup;
   searchTerm: string = "";
   searchResults: Subcategorie[] = [];
+  categories : Categories[] = [];
   isSubmitting: boolean = false;
   isEditMode: boolean = false;
   currentSubcategoriaId: number | null = null;
@@ -60,15 +61,15 @@ export class RegistrarSubcategoriesComponent implements OnInit {
 
   createForm(): void {
     this.subcategorieForm = this.formBuilder.group({
-      subcategoria_id: [null], // Opcional porque no se envía al guardar
+      subcategoria_id: [null],
       subcategoria_nombre: ["", [Validators.required, Validators.minLength(2)]],
       subcategoria_cantidad_productos: [
         0,
         [Validators.required, Validators.min(0)],
       ],
       subcategoria_estado: ["", Validators.required],
-      subcategoria_categoria: [null, Validators.required], // Asegurarse de que este campo sea requerido
-      accion: ["registrar"], // Acción por defecto
+      subcategoria_categoria: [null, Validators.required],
+      accion: ["registrar"],
     });
   }
 
@@ -267,7 +268,7 @@ export class RegistrarSubcategoriesComponent implements OnInit {
     this.router.navigate(["/subcategories"]);
   }
 
-  editUser(subcategorie: Subcategorie): void {
+  editSubCategoria(subcategorie: Subcategorie): void {
     // Configurar modo de edición
     this.isEditMode = true;
     this.currentSubcategoriaId = subcategorie.subcategoria_id || null;
@@ -286,7 +287,7 @@ export class RegistrarSubcategoriesComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  deleteUser(SubcategorieId: number): void {
+  deleteSubcategoria(SubcategorieId: number): void {
     if (confirm("¿Está seguro de que desea eliminar esta subcategoria?")) {
       this.subcategorieService
         .deleteSubcategorie(SubcategorieId)
