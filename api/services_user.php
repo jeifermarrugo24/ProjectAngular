@@ -69,19 +69,23 @@ function save_users($data, $conn)
 {
     $usuario_nombres = $data['usuario_nombres'] ?? '';
     $usuario_apellidos = $data['usuario_apellidos'] ?? '';
+    $usuario_email = $data['usuario_email'] ?? '';
+    $usuario_password = $data['usuario_password'] ?? '';
     $usuario_perfil = $data['usuario_perfil'] ?? '';
     $usuario_estado = $data['usuario_estado'] ?? '';
 
-    if (!$usuario_nombres || !$usuario_apellidos || !$usuario_perfil || !$usuario_estado) {
+    if (!$usuario_nombres || !$usuario_apellidos || !$usuario_perfil || !$usuario_estado || !$usuario_email || !$usuario_password) {
         http_response_code(400);
         echo json_encode(['error' => 'Todos los campos son obligatorios']);
         return;
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO usuarios (usuario_nombres, usuario_apellidos, usuario_perfil, usuario_estado) VALUES (:usuario_nombres, :usuario_apellidos, :usuario_perfil, :usuario_estado)");
+        $stmt = $conn->prepare("INSERT INTO usuarios (usuario_nombres, usuario_apellidos, usuario_email, usuarios_password, usuario_perfil, usuario_estado) VALUES (:usuario_nombres, :usuario_apellidos, :usuario_email, :usuario_password, :usuario_perfil, :usuario_estado)");
         $stmt->bindParam(':usuario_nombres', $usuario_nombres);
         $stmt->bindParam(':usuario_apellidos', $usuario_apellidos);
+        $stmt->bindParam(':usuario_email', $usuario_email);
+        $stmt->bindParam(':usuario_password', md5($usuario_password)); // Encriptar la contraseña
         $stmt->bindParam(':usuario_perfil', $usuario_perfil);
         $stmt->bindParam(':usuario_estado', $usuario_estado);
         $stmt->execute();
@@ -112,6 +116,16 @@ function get_users($data, $conn)
     if (!empty($data['usuario_apellidos'])) {
         $conditions .= " AND usuario_apellidos LIKE :usuario_apellidos";
         $params[':usuario_apellidos'] = "%" . $data['usuario_apellidos'] . "%";
+    }
+
+    if (!empty($data['usuario_email'])) {
+        $conditions .= " AND usuario_email LIKE :usuario_email";
+        $params[':usuario_email'] = "%" . $data['usuario_email'] . "%";
+    }
+
+    if (!empty($data['usuario_password'])) {
+        $conditions .= " AND usuario_password = :usuario_password";
+        $params[':usuario_password'] = md5($data['usuario_password']);
     }
 
     if (!empty($data['usuario_perfil'])) {
@@ -174,6 +188,7 @@ function update_users($data, $conn)
     $usuario_id = intval($data['usuario_id'] ?? 0);
     $usuario_nombres = $data['usuario_nombres'] ?? '';
     $usuario_apellidos = $data['usuario_apellidos'] ?? '';
+    $usuario_email = $data['usuario_email'] ?? '';
     $usuario_perfil = $data['usuario_perfil'] ?? '';
     $usuario_estado = $data['usuario_estado'] ?? '';
 
@@ -184,9 +199,10 @@ function update_users($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE usuarios SET usuario_nombres = :usuario_nombres, usuario_apellidos = :usuario_apellidos, usuario_perfil = :usuario_perfil, usuario_estado = :usuario_estado  WHERE usuario_id = :usuario_id");
+        $stmt = $conn->prepare("UPDATE usuarios SET usuario_nombres = :usuario_nombres, usuario_apellidos = :usuario_apellidos, usuario_email = :usuario_email,  usuario_perfil = :usuario_perfil, usuario_estado = :usuario_estado  WHERE usuario_id = :usuario_id");
         $stmt->bindParam(':usuario_nombres', $usuario_nombres);
         $stmt->bindParam(':usuario_apellidos', $usuario_apellidos);
+        $stmt->bindParam(':usuario_email', $usuario_email);
         $stmt->bindParam(':usuario_perfil', $usuario_perfil);
         $stmt->bindParam(':usuario_estado', $usuario_estado);
         $stmt->bindParam(':usuario_id', $usuario_id);
@@ -202,19 +218,19 @@ function update_users($data, $conn)
 
 function login_user($data, $conn)
 {
-    $usuario_nombres = $data['usuario_nombres'] ?? '';
-    $usuario_apellidos = $data['usuario_apellidos'] ?? '';
-
-    if (!$usuario_nombres || !$usuario_apellidos) {
+    //cambia todo por usuario_email y usuario_password
+    $usuario_email = $data['usuario_email'] ?? '';
+    $usuario_password = $data['usuario_password'] ?? '';
+    if (!$usuario_email || !$usuario_password) {
         http_response_code(400);
         echo json_encode(['error' => 'Todos los campos son obligatorios']);
         return;
     }
 
     try {
-        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario_nombres = :usuario_nombres AND usuario_apellidos = :usuario_apellidos");
-        $stmt->bindParam(':usuario_nombres', $usuario_nombres);
-        $stmt->bindParam(':usuario_apellidos', $usuario_apellidos);
+        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario_email = :usuario_email AND usuario_password = :usuario_password");
+        $stmt->bindParam(':usuario_email', $usuario_email);
+        $stmt->bindParam(':usuario_password', $usuario_password);
         $stmt->execute();
 
         $datos = $stmt->fetch(PDO::FETCH_ASSOC);

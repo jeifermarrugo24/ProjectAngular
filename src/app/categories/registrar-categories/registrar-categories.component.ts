@@ -100,43 +100,43 @@ export class RegistrarCategoriesComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-      if (this.categoriesForm.valid) {
-        this.isSubmitting = true;
-  
-        const categoriesData: Categories = this.categoriesForm.value;
-        const isEditing = this.isEditMode && this.currentCategoriaId;
-  
-        console.log(
-          `${isEditing ? "Editando" : "Registrando"} categoria:`,
-          categoriesData
-        );
-  
-        if (isEditing) {
-          // Modo edición - llamar updateUser
-          this.categoriesServices.updateCategories(categoriesData).subscribe((res) => {
-            this.handleSubmitResponse(
-              res,
-              "Categoria actualizada exitosamente",
-              "Error al actualizar la categoria"
-            );
-          });
-        } else {
-          // Modo registro - llamar saveUser
-          this.categoriesServices.saveCategories(categoriesData).subscribe((res) => {
-            this.handleSubmitResponse(
-              res,
-              "Categoria registrada exitosamente",
-              "Error al registrar la categoria"
-            );
-          });
-        }
+    if (this.categoriesForm.valid) {
+      this.isSubmitting = true;
+
+      const categoriesData: Categories = this.categoriesForm.value;
+      const isEditing = this.isEditMode && this.currentCategoriaId;
+
+      console.log(
+        `${isEditing ? "Editando" : "Registrando"} categoria:`,
+        categoriesData
+      );
+
+      if (isEditing) {
+        // Modo edición - llamar updateUser
+        this.categoriesServices.updateCategories(categoriesData).subscribe((res) => {
+          this.handleSubmitResponse(
+            res,
+            "Categoria actualizada exitosamente",
+            "Error al actualizar la categoria"
+          );
+        });
       } else {
-        // Marcar todos los campos como touched para mostrar errores
-        Object.keys(this.categoriesForm.controls).forEach((key) => {
-          this.categoriesForm.get(key)?.markAsTouched();
+        // Modo registro - llamar saveUser
+        this.categoriesServices.saveCategories(categoriesData).subscribe((res) => {
+          this.handleSubmitResponse(
+            res,
+            "Categoria registrada exitosamente",
+            "Error al registrar la categoria"
+          );
         });
       }
+    } else {
+      // Marcar todos los campos como touched para mostrar errores
+      Object.keys(this.categoriesForm.controls).forEach((key) => {
+        this.categoriesForm.get(key)?.markAsTouched();
+      });
     }
+  }
 
   private handleSubmitResponse(
     res: any,
@@ -249,20 +249,20 @@ export class RegistrarCategoriesComponent implements OnInit {
 
   editCategories(categorie: Categories): void {
       // Configurar modo de edición
-      this.isEditMode = true;
-      this.currentCategoriaId = categorie.categoria_id || null;
-  
-      // Llenar el formulario con los datos de la categoria seleccionado
-      this.categoriesForm.patchValue({
-        categoria_id: categorie.categoria_id,
-        categoria_nombre: categorie.categoria_nombre, // Asegurarse de que el valor sea un string
-        categoria_estado: categorie.categoria_estado,
-        accion: "editar",
-      });
-  
-      // Scroll hacia el formulario
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    this.isEditMode = true;
+    this.currentCategoriaId = categorie.categoria_id || null;
+
+    // Llenar el formulario con los datos de la categoria seleccionado
+    this.categoriesForm.patchValue({
+      categoria_id: categorie.categoria_id,
+      categoria_nombre: categorie.categoria_nombre, // Asegurarse de que el valor sea un string
+      categoria_estado: categorie.categoria_estado,
+      accion: "editar",
+    });
+
+    // Scroll hacia el formulario
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   deleteCategories(categoriaId: number): void {
     if (confirm("¿Está seguro de que desea eliminar esta categoria?")) {
