@@ -5,7 +5,8 @@
       <div class="row justify-content-center">
         <div class="col-lg-5 col-md-6">
           <h1 class="text-danger">Bienvenido equipo SkinaTech!</h1>
-          <p class="text-lead text-black">Mi nombre es Jeifer Marrugo <br> Para iniciar sesion coloque <br> Correo: admin@admin.com  <br> Contraseña: Administracion</p>
+          <p class="text-lead text-black">Mi nombre es Jeifer Marrugo <br> Para iniciar sesion coloque <br> Correo:
+            admin@admin.com <br> Contraseña: Administracion</p>
         </div>
       </div>
     </div>
@@ -18,10 +19,14 @@
       <div class="card bg-white shadow border-0">
         <div class="card-header bg-transparent">
           <div class="text-muted text-center mb-2 mt-4">
-            <img src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png" alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
+            <img
+              src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png"
+              alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
           </div>
           <hr>
-          <div class="text-muted text-center mt-2 text-danger"><h2>INICIO DE SESION</h2></div>
+          <div class="text-muted text-center mt-2 text-danger">
+            <h2>INICIO DE SESION</h2>
+          </div>
         </div>
         <div class="card-body px-lg-5">
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" role="form">
@@ -30,11 +35,11 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                 </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_nombres')" placeholder="Nombres"
-                  type="text" formControlName="usuario_nombres">
+                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_email')" placeholder="Email"
+                  type="email" formControlName="usuario_email">
               </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_nombres')">
-                {{getFieldError('usuario_nombres')}}
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_email')">
+                {{getFieldError('usuario_email')}}
               </div>
             </div>
             <div class="form-group">
@@ -42,11 +47,11 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                 </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_apellidos')"
-                  placeholder="Apellidos" type="text" formControlName="usuario_apellidos">
+                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_password')"
+                  placeholder="Contraseña" type="password" formControlName="usuario_password">
               </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_apellidos')">
-                {{getFieldError('usuario_apellidos')}}
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_password')">
+                {{getFieldError('usuario_password')}}
               </div>
             </div>
             <div class="custom-control custom-control-alternative custom-checkbox mt-4">

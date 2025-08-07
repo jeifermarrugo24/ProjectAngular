@@ -5,8 +5,8 @@ import { Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
 
 export interface LoginRequest {
-  usuario_nombres: string;
-  usuario_apellidos: string;
+  usuario_email: string;
+  usuario_password: string;
 }
 
 export interface LoginResponse {

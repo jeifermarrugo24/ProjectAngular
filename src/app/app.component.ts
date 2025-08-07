@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
 
   createLoginForm(): void {
     this.loginForm = this.formBuilder.group({
-      usuario_nombres: ["", [Validators.required, Validators.minLength(2)]],
-      usuario_apellidos: ["", [Validators.required, Validators.minLength(2)]],
+      usuario_email: ["", [Validators.required, Validators.minLength(2)]],
+      usuario_password: ["", [Validators.required, Validators.minLength(2)]],
       rememberMe: [false],
     });
   }
@@ -39,13 +39,13 @@ export class AppComponent implements OnInit {
       this.isSubmitting = true;
 
       const loginData: LoginRequest = {
-        usuario_nombres: this.loginForm.value.usuario_nombres,
-        usuario_apellidos: this.loginForm.value.usuario_apellidos,
+        usuario_email: this.loginForm.value.usuario_email,
+        usuario_password: this.loginForm.value.usuario_password,
       };
 
       console.log("=== INICIANDO SESIÓN ===");
-      console.log("Nombres:", loginData.usuario_nombres);
-      console.log("Apellidos:", loginData.usuario_apellidos);
+      console.log("Email:", loginData.usuario_email);
+      console.log("Contraseña:", loginData.usuario_password);
       console.log("Timestamp:", new Date().toISOString());
       console.log("========================");
 
