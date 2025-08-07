@@ -64,6 +64,8 @@ export class RegistrarComponent implements OnInit {
       usuario_id: [null],
       usuario_nombres: ["", [Validators.required, Validators.minLength(2)]],
       usuario_apellidos: ["", [Validators.required, Validators.minLength(2)]],
+      usuario_email: ["", [Validators.required, Validators.email]],
+      usuario_password: ["", [Validators.required, Validators.minLength(6)]],
       usuario_perfil: ["", Validators.required],
       usuario_estado: ["", Validators.required],
       accion: ["registrar"],
@@ -268,6 +270,7 @@ export class RegistrarComponent implements OnInit {
       usuario_id: user.usuario_id,
       usuario_nombres: user.usuario_nombres,
       usuario_apellidos: user.usuario_apellidos,
+      usuario_email: user.usuario_email,
       usuario_perfil: `${user.usuario_perfil}`, // Asegurarse de que el valor sea un string
       usuario_estado: user.usuario_estado,
       accion: "editar",

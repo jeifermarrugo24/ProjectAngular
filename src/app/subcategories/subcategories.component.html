@@ -4,28 +4,40 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-danger">
-                        <h4 class="card-title ">Listado de categorias </h4>
-                        <p class="card-category"> Aqui veras la lista de las categorias registradas en el sistema</p>
+                        <h4 class="card-title ">Listado de subcategorias </h4>
+                        <p class="card-category"> Aqui veras la lista de las subcategorias en el sistema</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class=" text-primary">
                                     <th>
-                                        Nombre de Categoria
+                                        Nombres
+                                    </th>
+                                    <th>
+                                        Apellidos
+                                    </th>
+                                    <th>
+                                        Perfil
                                     </th>
                                     <th>
                                         Estado
                                     </th>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let categorie of categories">
+                                    <tr *ngFor="let user of users">
 
                                         <td>
-                                            {{categorie.categoria_nombre}}
+                                            {{user.usuario_nombres}}
                                         </td>
                                         <td>
-                                            {{categorie.categoria_estado}}
+                                            {{user.usuario_apellidos}}
+                                        </td>
+                                        <td>
+                                            {{user.usuario_perfil}}
+                                        </td>
+                                        <td>
+                                            {{user.usuario_estado}}
                                         </td>
                                     </tr>
 

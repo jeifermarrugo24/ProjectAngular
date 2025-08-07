@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CategoriesService } from "../services/categories/categories.service";
+import { Categories } from "../models/categories.model";
 
 @Component({
   selector: 'app-categories',
@@ -7,9 +9,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CategoriesComponent implements OnInit {
 
-  constructor() { }
+  categories: Categories[] = [];
+  error: string | null = null;
 
-  ngOnInit(): void {
+  constructor(private categoriesServices: CategoriesService) {}
+
+  ngOnInit() {
+    this.categoriesServices.getCategories().subscribe((res) => {
+      if ("data" in res) {
+        this.categories = res.data;
+      }
+      if ("error" in res) {
+        this.error = res.error || "Error desconocido";
+      }
+    });
   }
 
 }
