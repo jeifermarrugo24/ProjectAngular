@@ -7,6 +7,7 @@ import { DashboardComponent } from "../../dashboard/dashboard.component";
 import { UserProfileComponent } from "../../user-profile/user-profile.component";
 import { UsersComponent } from "../../users/users.component";
 import { RegistrarComponent } from "../../users/registrar/registrar.component";
+import { RegistrarCategoriesComponent } from "../../categories/registrar-categories/registrar-categories.component";
 import { TypographyComponent } from "../../typography/typography.component";
 import { IconsComponent } from "../../icons/icons.component";
 import { MapsComponent } from "../../maps/maps.component";
@@ -39,6 +40,7 @@ import { MatIconModule } from "@angular/material/icon";
     UserProfileComponent,
     UsersComponent,
     RegistrarComponent,
+    RegistrarCategoriesComponent,
     TypographyComponent,
     IconsComponent,
     MapsComponent,
