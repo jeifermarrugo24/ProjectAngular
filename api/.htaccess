@@ -1,0 +1,51 @@
+RewriteEngine On
+
+# Autoriza encabezado Authorization
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+# Redirección si no es archivo físico ni carpeta
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Reescritura de endpoints para usuarios
+RewriteRule ^guardarDatosUsuario$ services_user.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosUsuario$ services_user.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosUsuario$ services_user.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosUsuario$ services_user.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para categorías
+RewriteRule ^guardarDatosCategoria$ services_categories.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosCategoria$ services_categories.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosCategoria$ services_categories.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosCategoria$ services_categories.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para subcategorías
+RewriteRule ^guardarDatosSubcategoria$ services_subcategories.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosSubcategoria$ services_subcategories.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosSubcategoria$ services_subcategories.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosSubcategoria$ services_subcategories.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para productos
+RewriteRule ^guardarDatosProducto$ services_products.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosProducto$ services_products.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosProducto$ services_products.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosProducto$ services_products.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para permisos
+RewriteRule ^guardarDatosPermiso$ services_permissions.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosPermiso$ services_permissions.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosPermiso$ services_permissions.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosPermiso$ services_permissions.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para roles
+RewriteRule ^guardarDatosRol$ services_roles.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosRol$ services_roles.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosRol$ services_roles.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosRol$ services_roles.php?accion=editar [L,QSA]
+
+# Reescritura de endpoints para menus
+RewriteRule ^guardarDatosMenu$ services_menus.php?accion=guardar [L,QSA]
+RewriteRule ^consultarDatosMenu$ services_menus.php?accion=consultar [L,QSA]
+RewriteRule ^eliminarDatosMenu$ services_menus.php?accion=eliminar [L,QSA]
+RewriteRule ^editarDatosMenu$ services_menus.php?accion=editar [L,QSA]
