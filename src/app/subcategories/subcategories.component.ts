@@ -1,8 +1,10 @@
 import { UserService } from "app/services/users/users.service";
-import { Component, OnInit } from "@angular/core";
 import { User } from "app/models/user.model";
 // import { SubcategorieService } from "../services/subcategories/subcategories.service";
 // import { Subcategorie } from "../models/subcategorie";
+import { Component, OnInit } from "@angular/core";
+import { SubcategorieService } from "../services/subcategories/subcategories.service";
+import { Subcategorie } from "../models/subcategorie.model";
 
 @Component({
   selector: "app-subcategories",
@@ -10,12 +12,25 @@ import { User } from "app/models/user.model";
   styleUrls: ["./subcategories.component.scss"],
 })
 export class SubcategoriesComponent implements OnInit {
-  users: User[] = [];
-  constructor(private userService: UserService) {}
+  allUsers: User[] = [];
+  error: string | null = null;
+  subcategories: Subcategorie[] = [];
+  constructor(
+    private userService: UserService,
+    private subcategorieService: SubcategorieService
+  ) {}
 
   ngOnInit(): void {
     this.userService.getUsers().subscribe((data) => {
-      this.users = data.data;
+      this.allUsers = data.data;
+    });
+    this.subcategorieService.getSubCategorie().subscribe((res) => {
+      if ("data" in res) {
+        this.subcategories = res.data;
+      }
+      if ("error" in res) {
+        this.error = res.error || "Error desconocido";
+      }
     });
   }
 }

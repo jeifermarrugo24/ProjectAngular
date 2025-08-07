@@ -12,32 +12,32 @@
                             <table class="table">
                                 <thead class=" text-primary">
                                     <th>
-                                        Nombres
+                                        Nombre de la subcategoria
                                     </th>
                                     <th>
-                                        Apellidos
+                                        Cantidad de productos
                                     </th>
                                     <th>
-                                        Perfil
+                                        Estado de la subcategoria
                                     </th>
                                     <th>
-                                        Estado
+                                        Categoria a la que pertenece
                                     </th>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let user of users">
+                                    <tr *ngFor="let subcategorie of subcategories">
 
                                         <td>
-                                            {{user.usuario_nombres}}
+                                            {{subcategorie.subcategoria_nombre}}
                                         </td>
                                         <td>
-                                            {{user.usuario_apellidos}}
+                                            {{subcategorie.subcategoria_cantidad_productos}}
                                         </td>
                                         <td>
-                                            {{user.usuario_perfil}}
+                                            {{subcategorie.subcategoria_estado}}
                                         </td>
                                         <td>
-                                            {{user.usuario_estado}}
+                                            {{subcategorie.subcategoria_categoria}}
                                         </td>
                                     </tr>
 
