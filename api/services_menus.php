@@ -64,7 +64,7 @@ switch ($accion) {
 function save_menus($data, $conn)
 {
     $menu_nombre = $data['menu_nombre'] ?? '';
-
+    $menu_tipo = $data['menu_tipo'] ?? 'default';
     if (!$menu_nombre) {
         http_response_code(400);
         echo json_encode(['error' => 'El campo menu nombre es obligatorio']);
@@ -72,8 +72,9 @@ function save_menus($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre) VALUES (:menu_nombre)");
+        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre, menu_tipo) VALUES (:menu_nombre,:menu_tipo)");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
+        $stmt->bindParam(':menu_tipo', $menu_tipo);
         $stmt->execute();
 
         http_response_code(200);
@@ -92,6 +93,10 @@ function get_menus($data, $conn)
     if (!empty($data['menu_nombre'])) {
         $conditions .= " AND menu_nombre LIKE :menu_nombre";
         $params[':menu_nombre'] = "%" . $data['menu_nombre'] . "%";
+    }
+    if (!empty($data['menu_tipo'])) {
+        $conditions .= " AND menu_tipo = :menu_tipo";
+        $params[':menu_tipo'] = $data['menu_tipo'];
     }
 
     if (!empty($data['menu_id'])) {
@@ -148,6 +153,7 @@ function update_menus($data, $conn)
 {
     $menu_id = intval($data['menu_id'] ?? 0);
     $menu_nombre = $data['menu_nombre'] ?? '';
+    $menu_tipo = $data['menu_tipo'] ?? 'default';
 
     if ($menu_id <= 0) {
         http_response_code(400);
@@ -156,8 +162,9 @@ function update_menus($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre WHERE menu_id = :menu_id");
+        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre, menu_tipo = :menu_tipo WHERE menu_id = :menu_id");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
+        $stmt->bindParam(':menu_tipo', $menu_tipo);
         $stmt->bindParam(':menu_id', $menu_id);
         $stmt->execute();
 
