@@ -66,6 +66,7 @@ function save_menus($data, $conn)
     $menu_nombre = $data['menu_nombre'] ?? '';
     $menu_tipo = $data['menu_tipo'] ?? 'default';
     $menu_id_padre = isset($data['menu_id_padre']) ? intval($data['menu_id_padre']) : null;
+    $menu_path = $data['menu_path'] ?? '';
     if (!$menu_nombre) {
         http_response_code(400);
         echo json_encode(['error' => 'El campo menu nombre es obligatorio']);
@@ -73,9 +74,11 @@ function save_menus($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre, menu_tipo, menu_id_padre) VALUES (:menu_nombre,:menu_tipo, :menu_id_padre)");
+
+        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre, menu_tipo, menu_id_padre, menu_path) VALUES (:menu_nombre,:menu_tipo, :menu_id_padre, :menu_path)");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
         $stmt->bindParam(':menu_tipo', $menu_tipo);
+        $stmt->bindParam(':menu_path', $menu_path);
         if ($menu_id_padre !== null) {
             $stmt->bindParam(':menu_id_padre', $menu_id_padre);
         } else {
@@ -113,6 +116,11 @@ function get_menus($data, $conn)
     if (!empty($data['menu_id'])) {
         $conditions .= " AND menu_id = :menu_id";
         $params[':menu_id'] = intval($data['menu_id']);
+    }
+
+    if (isset($data['menu_path']) && $data['menu_path'] !== '') {
+        $conditions .= " AND menu_path = :menu_path";
+        $params[':menu_path'] = $data['menu_path'];
     }
 
     try {
@@ -166,6 +174,7 @@ function update_menus($data, $conn)
     $menu_nombre = $data['menu_nombre'] ?? '';
     $menu_tipo = $data['menu_tipo'] ?? 'default';
     $menu_id_padre = isset($data['menu_id_padre']) ? intval($data['menu_id_padre']) : null;
+    $menu_path = $data['menu_path'] ?? '';
 
     if ($menu_id <= 0) {
         http_response_code(400);
@@ -174,7 +183,7 @@ function update_menus($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre, menu_tipo = :menu_tipo, menu_id_padre = :menu_id_padre WHERE menu_id = :menu_id");
+        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre, menu_tipo = :menu_tipo, menu_id_padre = :menu_id_padre, menu_path = :menu_path WHERE menu_id = :menu_id");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
         $stmt->bindParam(':menu_tipo', $menu_tipo);
         $stmt->bindParam(':menu_id', $menu_id);

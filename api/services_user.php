@@ -232,7 +232,6 @@ function login_user($data, $conn)
         $stmt->bindParam(':usuario_email', $usuario_email);
         $stmt->bindParam(':usuario_password', $usuario_password);
         $stmt->execute();
-
         $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$datos) {
