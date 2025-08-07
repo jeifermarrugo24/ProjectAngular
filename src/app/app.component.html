@@ -18,35 +18,39 @@
       <div class="card bg-white shadow border-0">
         <div class="card-header bg-transparent">
           <div class="text-muted text-center mb-2 mt-4">
-            <img src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png" alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
+            <img
+              src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png"
+              alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
           </div>
           <hr>
-          <div class="text-muted text-center mt-2 text-danger"><h2>INICIO DE SESION</h2></div>
+          <div class="text-muted text-center mt-2 text-danger">
+            <h2>INICIO DE SESION</h2>
+          </div>
         </div>
         <div class="card-body px-lg-5">
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" role="form">
             <div class="form-group mb-3">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                  <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                 </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('email')" placeholder="Email"
-                  type="email" formControlName="email">
+                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_email')" placeholder="Email"
+                  type="email" formControlName="usuario_email">
               </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
-                {{getFieldError('email')}}
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_email')">
+                {{getFieldError('usuario_email')}}
               </div>
             </div>
             <div class="form-group">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                  <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                 </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('password')" placeholder="Password"
-                  type="password" formControlName="password">
+                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_password')"
+                  placeholder="Contraseña" type="password" formControlName="usuario_password">
               </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
-                {{getFieldError('password')}}
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_password')">
+                {{getFieldError('usuario_password')}}
               </div>
             </div>
             <div class="custom-control custom-control-alternative custom-checkbox mt-4">

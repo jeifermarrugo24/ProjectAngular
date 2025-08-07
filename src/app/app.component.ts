@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AuthService, LoginRequest } from "./services/auth/auth.service";
 
 @Component({
   selector: "app-root",
@@ -11,18 +12,24 @@ export class AppComponent implements OnInit {
   isSubmitting: boolean = false;
   rememberMe: boolean = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService
+  ) {
     this.createLoginForm();
   }
 
   ngOnInit(): void {
-    // Inicialización adicional si es necesaria
+    // // Verificar si ya está autenticado
+    // if (this.authService.isAuthenticated()) {
+    //   this.authService.redirectToDashboard();
+    // }
   }
 
   createLoginForm(): void {
     this.loginForm = this.formBuilder.group({
-      email: ["", [Validators.required, Validators.email]],
-      password: ["", [Validators.required, Validators.minLength(6)]],
+      usuario_email: ["", [Validators.required, Validators.minLength(2)]],
+      usuario_password: ["", [Validators.required, Validators.minLength(2)]],
       rememberMe: [false],
     });
   }
@@ -31,33 +38,64 @@ export class AppComponent implements OnInit {
     if (this.loginForm.valid) {
       this.isSubmitting = true;
 
-      const loginData = {
-        email: this.loginForm.value.email,
-        password: this.loginForm.value.password,
-        rememberMe: this.loginForm.value.rememberMe,
+      const loginData: LoginRequest = {
+        usuario_email: this.loginForm.value.usuario_email,
+        usuario_password: this.loginForm.value.usuario_password,
       };
 
-      console.log("=== DATOS DE LOGIN CAPTURADOS ===");
-      console.log("Email:", loginData.email);
-      console.log("Password:", loginData.password);
-      console.log("Remember Me:", loginData.rememberMe);
+      console.log("=== INICIANDO SESIÓN ===");
+      console.log("Email:", loginData.usuario_email);
+      console.log("Contraseña:", loginData.usuario_password);
       console.log("Timestamp:", new Date().toISOString());
-      console.log("====================================");
+      console.log("========================");
 
-      // Simular llamada a API
-      setTimeout(() => {
-        const message = `Login exitoso!\n\nEmail: ${
-          loginData.email
-        }\nRecordar sesión: ${loginData.rememberMe ? "Sí" : "No"}`;
-        alert(message);
-        this.isSubmitting = false;
+      this.authService.login(loginData).subscribe({
+        next: (response) => {
+          console.log("Respuesta del servidor:", response);
 
-        // Opcional: limpiar formulario después del login exitoso
-        // this.resetForm();
+          if (response.success && response.token) {
+            // Login exitoso
+            console.log("Login exitoso, token recibido");
 
-        // Aquí iría la redirección al dashboard cuando esté listo
-        // this.router.navigate(['/dashboard']);
-      }, 2000);
+            // Guardar token y datos de usuario
+            this.authService.setAuthData(response.token);
+
+            // Mostrar mensaje de éxito
+            alert(`¡Bienvenido! ${response.message}`);
+
+            // Redirigir al dashboard
+            console.log("=== INICIANDO REDIRECCIÓN AL DASHBOARD ===");
+            this.authService.redirectToDashboard();
+          } else {
+            // Error en credenciales
+            console.error(
+              "Login fallido:",
+              response.error || "Error desconocido"
+            );
+            alert(response.error || "Error en el inicio de sesión");
+          }
+
+          this.isSubmitting = false;
+        },
+        error: (error) => {
+          console.error("Error en la llamada de login:", error);
+
+          let errorMessage = "Error de conexión con el servidor";
+
+          if (error.status === 401) {
+            errorMessage = "Credenciales inválidas. Verifique sus datos.";
+          } else if (error.status === 400) {
+            errorMessage = "Datos incompletos. Complete todos los campos.";
+          } else if (error.status === 500) {
+            errorMessage = "Error interno del servidor. Intente más tarde.";
+          } else if (error.error?.error) {
+            errorMessage = error.error.error;
+          }
+
+          alert(errorMessage);
+          this.isSubmitting = false;
+        },
+      });
     } else {
       // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.loginForm.controls).forEach((key) => {
@@ -85,15 +123,15 @@ export class AppComponent implements OnInit {
     const field = this.loginForm.get(fieldName);
     if (field?.errors) {
       if (field.errors["required"]) {
-        return `${
-          fieldName === "email" ? "El email" : "La contraseña"
-        } es requerida`;
-      }
-      if (field.errors["email"]) {
-        return "Ingrese un email válido";
+        if (fieldName === "usuario_nombres") {
+          return "Los nombres son requeridos";
+        } else if (fieldName === "usuario_apellidos") {
+          return "Los apellidos son requeridos";
+        }
+        return "Este campo es requerido";
       }
       if (field.errors["minlength"]) {
-        return "La contraseña debe tener al menos 6 caracteres";
+        return `Este campo debe tener al menos ${field.errors["minlength"].requiredLength} caracteres`;
       }
     }
     return "";
