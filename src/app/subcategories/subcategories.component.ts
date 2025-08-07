@@ -12,7 +12,6 @@ import { Subcategorie } from "../models/subcategorie.model";
   styleUrls: ["./subcategories.component.scss"],
 })
 export class SubcategoriesComponent implements OnInit {
-  allUsers: User[] = [];
   error: string | null = null;
   subcategories: Subcategorie[] = [];
   constructor(
@@ -21,9 +20,6 @@ export class SubcategoriesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe((data) => {
-      this.allUsers = data.data;
-    });
     this.subcategorieService.getSubCategorie().subscribe((res) => {
       if ("data" in res) {
         this.subcategories = res.data;

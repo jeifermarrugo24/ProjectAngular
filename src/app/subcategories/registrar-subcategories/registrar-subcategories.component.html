@@ -72,25 +72,28 @@
                         <div class="row">
                             <!-- Nombres -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Nombre Subcategoria</mat-label>
-                                    <input matInput placeholder="Ingrese los nombres" formControlName="subcategoria_nombre"
+                                <div class="example-full-width">
+                                    <label>Nombre Subcategoria</label>
+                                    <input matInput placeholder="Ingrese los nombres"
+                                        formControlName="subcategoria_nombre"
                                         [class.is-invalid]="isFieldInvalid('subcategoria_nombre')">
-                                    <mat-error *ngIf="subcategorieForm.get('subcategoria_nombre')?.hasError('required')">
+                                    <mat-error
+                                        *ngIf="subcategorieForm.get('subcategoria_nombre')?.hasError('required')">
                                         Los nombres son requeridos
                                     </mat-error>
-                                    <mat-error *ngIf="subcategorieForm.get('subcategoria_nombre')?.hasError('minlength')">
+                                    <mat-error
+                                        *ngIf="subcategorieForm.get('subcategoria_nombre')?.hasError('minlength')">
                                         Los nombres deben tener al menos 2 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <!-- Estado -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Estado</mat-label>
+                                <div class="example-full-width">
+                                    <label>Estado</label>
                                     <mat-select formControlName="subcategoria_estado"
                                         [class.is-invalid]="isFieldInvalid('subcategoria_estado')">
                                         <mat-option *ngFor="let estado of estados" [value]="estado.value">
@@ -98,27 +101,29 @@
                                             {{estado.label}}
                                         </mat-option>
                                     </mat-select>
-                                    <mat-error *ngIf="subcategorieForm.get('subcategoria_estado')?.hasError('required')">
+                                    <mat-error
+                                        *ngIf="subcategorieForm.get('subcategoria_estado')?.hasError('required')">
                                         El estado es requerido
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Categoria</mat-label>
+                                <div class="example-full-width">
+                                    <label>Categoria</label>
                                     <mat-select formControlName="subcategoria_categoria"
                                         [class.is-invalid]="isFieldInvalid('subcategoria_categoria')">
                                         <mat-option *ngFor="" [value]="categoria.id">
                                             {{categoria.nombre}}
                                         </mat-option>
                                     </mat-select>
-                                    <mat-error *ngIf="subcategorieForm.get('subcategoria_categoria')?.hasError('required')">
+                                    <mat-error
+                                        *ngIf="subcategorieForm.get('subcategoria_categoria')?.hasError('required')">
                                         La categoría es requerida
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
@@ -127,7 +132,8 @@
                             <div class="col-md-12">
                                 <div class="button-group text-center">
                                     <button mat-raised-button color="primary" type="submit"
-                                        [disabled]="subcategorieForm.invalid || isSubmitting" class="btn btn-primary btn-round">
+                                        [disabled]="subcategorieForm.invalid || isSubmitting"
+                                        class="btn btn-primary btn-round">
                                         <i class="material-icons">{{isEditMode ? 'edit' : 'save'}}</i>
                                         {{getSubmitButtonText()}}
                                         <div class="ripple-container"></div>
@@ -222,11 +228,13 @@
                     </p>
                 </div>
             </div>
+
+
         </div>
     </div>
 
     <!-- Mensaje de información cuando no hay búsqueda activa -->
-    <div class="row" *ngIf="searchTerm.length === 0 && allUsers.length === 0">
+    <div class="row" *ngIf="searchTerm.length === 0 && allSubcategories.length === 0">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body text-center">

@@ -13,8 +13,9 @@
                         <div class="col-md-6">
                             <form class="search-form">
                                 <div class="input-group no-border">
-                                    <input type="text" class="form-control" placeholder="Buscar categorias existentes..."
-                                        [value]="searchTerm" (input)="onSearch($event)" name="search">
+                                    <input type="text" class="form-control"
+                                        placeholder="Buscar categorias existentes..." [value]="searchTerm"
+                                        (input)="onSearch($event)" name="search">
                                     <div class="input-group-append">
                                         <button mat-raised-button type="button"
                                             class="btn btn-primary btn-round btn-just-icon" (click)="performSearch()">
@@ -72,8 +73,8 @@
                         <div class="row">
                             <!-- Nombres -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Nombre</mat-label>
+                                <div class="example-full-width">
+                                    <label>Nombre</label>
                                     <input matInput placeholder="Ingrese los nombres" formControlName="categoria_nombre"
                                         [class.is-invalid]="isFieldInvalid('categoria_nombre')">
                                     <mat-error *ngIf="categoriesForm.get('categoria_nombre')?.hasError('required')">
@@ -82,14 +83,14 @@
                                     <mat-error *ngIf="categoriesForm.get('categoria_nombre')?.hasError('minlength')">
                                         Los nombres deben tener al menos 2 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
-                        </div> 
+                        </div>
                         <div class="row">
                             <!-- Estado -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Estado</mat-label>
+                                <div class="example-full-width">
+                                    <label>Estado</label>
                                     <mat-select formControlName="categoria_estado"
                                         [class.is-invalid]="isFieldInvalid('categoria_estado')">
                                         <mat-option *ngFor="let estado of estados" [value]="estado.value">
@@ -100,7 +101,7 @@
                                     <mat-error *ngIf="categoriesForm.get('categoria_estado')?.hasError('required')">
                                         El estado es requerido
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
@@ -109,7 +110,8 @@
                             <div class="col-md-12">
                                 <div class="button-group text-center">
                                     <button mat-raised-button color="primary" type="submit"
-                                        [disabled]="categoriesForm.invalid || isSubmitting" class="btn btn-primary btn-round">
+                                        [disabled]="categoriesForm.invalid || isSubmitting"
+                                        class="btn btn-primary btn-round">
                                         <i class="material-icons">{{isEditMode ? 'edit' : 'save'}}</i>
                                         {{getSubmitButtonText()}}
                                         <div class="ripple-container"></div>
@@ -166,7 +168,8 @@
                                     </td>
                                     <td class="text-right">
                                         <button mat-raised-button color="primary" size="sm"
-                                            class="btn btn-primary btn-sm btn-round" (click)="editCategories(categoria)">
+                                            class="btn btn-primary btn-sm btn-round"
+                                            (click)="editCategories(categoria)">
                                             <i class="material-icons">edit</i>
                                         </button>
                                         <button mat-raised-button color="warn" size="sm"

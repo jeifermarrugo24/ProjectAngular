@@ -47,7 +47,10 @@ export class RegistrarSubcategoriesComponent implements OnInit {
         this.allSubcategories = res.data;
         // Mostrar todos los usuarios al inicio
         this.searchResults = [...this.allSubcategories];
-        console.log("Subcategorias cargadas inicialmente:", this.allSubcategories.length);
+        console.log(
+          "Subcategorias cargadas inicialmente:",
+          this.allSubcategories.length
+        );
       }
       if ("error" in res) {
         alert(res.error || "Error desconocido al cargar usuarios");
@@ -59,13 +62,16 @@ export class RegistrarSubcategoriesComponent implements OnInit {
     this.subcategorieForm = this.formBuilder.group({
       subcategoria_id: [null], // Opcional porque no se envía al guardar
       subcategoria_nombre: ["", [Validators.required, Validators.minLength(2)]],
-      subcategoria_cantidad_productos: [0, [Validators.required, Validators.min(0)]],
+      subcategoria_cantidad_productos: [
+        0,
+        [Validators.required, Validators.min(0)],
+      ],
       subcategoria_estado: ["", Validators.required],
       subcategoria_categoria: [null, Validators.required], // Asegurarse de que este campo sea requerido
       accion: ["registrar"], // Acción por defecto
     });
   }
-     
+
   onSearch(event: any): void {
     const searchValue = event.target.value.toLowerCase();
     this.searchTerm = searchValue;
@@ -89,9 +95,10 @@ export class RegistrarSubcategoriesComponent implements OnInit {
       const matchNombre = subcategorie.subcategoria_nombre
         .toLowerCase()
         .includes(this.searchTerm.toLowerCase());
-      const matchCantidadProductos = subcategorie.subcategoria_cantidad_productos
-        .toString()
-        .includes(this.searchTerm);
+      const matchCantidadProductos =
+        subcategorie.subcategoria_cantidad_productos
+          .toString()
+          .includes(this.searchTerm);
       const matchCategoriaId = subcategorie.subcategoria_categoria
         .toString()
         .includes(this.searchTerm);
@@ -123,22 +130,26 @@ export class RegistrarSubcategoriesComponent implements OnInit {
 
       if (isEditing) {
         // Modo edición - llamar updateUser
-        this.subcategorieService.updateSubcategorie(subcategorieData).subscribe((res) => {
-          this.handleSubmitResponse(
-            res,
-            "Subcategoria actualizada exitosamente",
-            "Error al actualizar la subcategoria"
-          );
-        });
+        this.subcategorieService
+          .updateSubcategorie(subcategorieData)
+          .subscribe((res) => {
+            this.handleSubmitResponse(
+              res,
+              "Subcategoria actualizada exitosamente",
+              "Error al actualizar la subcategoria"
+            );
+          });
       } else {
         // Modo registro - llamar saveUser
-        this.subcategorieService.saveSubCategorie(subcategorieData).subscribe((res) => {
-          this.handleSubmitResponse(
-            res,
-            "Subcategoria registrada exitosamente",
-            "Error al registrar la subcategoria"
-          );
-        });
+        this.subcategorieService
+          .saveSubCategorie(subcategorieData)
+          .subscribe((res) => {
+            this.handleSubmitResponse(
+              res,
+              "Subcategoria registrada exitosamente",
+              "Error al registrar la subcategoria"
+            );
+          });
       }
     } else {
       // Marcar todos los campos como touched para mostrar errores
@@ -265,7 +276,8 @@ export class RegistrarSubcategoriesComponent implements OnInit {
     this.subcategorieForm.patchValue({
       subcategoria_id: subcategorie.subcategoria_id,
       subcategoria_nombre: subcategorie.subcategoria_nombre,
-      subcategoria_cantidad_productos: subcategorie.subcategoria_cantidad_productos,
+      subcategoria_cantidad_productos:
+        subcategorie.subcategoria_cantidad_productos,
       subcategoria_estado: subcategorie.subcategoria_estado,
       subcategoria_categoria: subcategorie.subcategoria_categoria,
       accion: "editar", // Cambiar la acción a editar
@@ -276,19 +288,23 @@ export class RegistrarSubcategoriesComponent implements OnInit {
 
   deleteUser(SubcategorieId: number): void {
     if (confirm("¿Está seguro de que desea eliminar esta subcategoria?")) {
-      this.subcategorieService.deleteSubcategorie(SubcategorieId).subscribe((res) => {
-        if ("message" in res) {
-          console.log("Subcategoria eliminada:", res.message);
-          alert("Subcategoria Eliminada exitosamente");
+      this.subcategorieService
+        .deleteSubcategorie(SubcategorieId)
+        .subscribe((res) => {
+          if ("message" in res) {
+            console.log("Subcategoria eliminada:", res.message);
+            alert("Subcategoria Eliminada exitosamente");
 
-          // Recargar usuarios y actualizar búsqueda
-          this.reloadSubcategoriesAndUpdateSearch();
-        }
-        if ("error" in res) {
-          console.error(res.error || "Error desconocido al eliminar subcategoria");
-          alert(res.error || "Error al eliminar subcategoria");
-        }
-      });
+            // Recargar usuarios y actualizar búsqueda
+            this.reloadSubcategoriesAndUpdateSearch();
+          }
+          if ("error" in res) {
+            console.error(
+              res.error || "Error desconocido al eliminar subcategoria"
+            );
+            alert(res.error || "Error al eliminar subcategoria");
+          }
+        });
     }
   }
 
@@ -322,4 +338,3 @@ export class RegistrarSubcategoriesComponent implements OnInit {
     return this.isEditMode ? "cancel" : "refresh";
   }
 }
-

@@ -72,8 +72,8 @@
                         <div class="row">
                             <!-- Nombres -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Nombres</mat-label>
+                                <div class="example-full-width">
+                                    <label>Nombres</label>
                                     <input matInput placeholder="Ingrese los nombres" formControlName="usuario_nombres"
                                         [class.is-invalid]="isFieldInvalid('usuario_nombres')">
                                     <mat-error *ngIf="userForm.get('usuario_nombres')?.hasError('required')">
@@ -82,13 +82,13 @@
                                     <mat-error *ngIf="userForm.get('usuario_nombres')?.hasError('minlength')">
                                         Los nombres deben tener al menos 2 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
 
                             <!-- Apellidos -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Apellidos</mat-label>
+                                <div class="example-full-width">
+                                    <label>Apellidos</label>
                                     <input matInput placeholder="Ingrese los apellidos"
                                         formControlName="usuario_apellidos"
                                         [class.is-invalid]="isFieldInvalid('usuario_apellidos')">
@@ -98,15 +98,15 @@
                                     <mat-error *ngIf="userForm.get('usuario_apellidos')?.hasError('minlength')">
                                         Los apellidos deben tener al menos 2 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <!-- Email -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Email</mat-label>
+                                <div class="example-full-width">
+                                    <label>Email</label>
                                     <input matInput placeholder="Ingrese el email" formControlName="usuario_email"
                                         [class.is-invalid]="isFieldInvalid('usuario_email')">
                                     <mat-error *ngIf="userForm.get('usuario_email')?.hasError('required')">
@@ -115,14 +115,14 @@
                                     <mat-error *ngIf="userForm.get('usuario_email')?.hasError('email')">
                                         El email debe ser válido
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <!-- Contraseña (solo en modo creación) -->
                             <div class="col-md-6" *ngIf="isEditMode">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Contraseña (opcional)</mat-label>
+                                <div class="example-full-width">
+                                    <label>Contraseña (opcional)</label>
                                     <input matInput type="password" placeholder="Ingrese la contraseña (opcional)"
                                         formControlName="usuario_password"
                                         [class.is-invalid]="isFieldInvalid('usuario_password')">
@@ -132,15 +132,15 @@
                                     <mat-error *ngIf="userForm.get('usuario_password')?.hasError('minlength')">
                                         La contraseña debe tener al menos 6 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <!-- Perfil -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Perfil</mat-label>
+                                <div class="example-full-width">
+                                    <label>Perfil</label>
                                     <mat-select formControlName="usuario_perfil"
                                         [class.is-invalid]="isFieldInvalid('usuario_perfil')">
                                         <mat-option *ngFor="let perfil of perfiles" [value]="perfil.value">
@@ -150,15 +150,15 @@
                                     <mat-error *ngIf="userForm.get('usuario_perfil')?.hasError('required')">
                                         El perfil es requerido
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <!-- Estado -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Estado</mat-label>
+                                <div class="example-full-width">
+                                    <label>Estado</label>
                                     <mat-select formControlName="usuario_estado"
                                         [class.is-invalid]="isFieldInvalid('usuario_estado')">
                                         <mat-option *ngFor="let estado of estados" [value]="estado.value">
@@ -169,7 +169,7 @@
                                     <mat-error *ngIf="userForm.get('usuario_estado')?.hasError('required')">
                                         El estado es requerido
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
 
 

@@ -13,8 +13,9 @@
                         <div class="col-md-6">
                             <form class="search-form">
                                 <div class="input-group no-border">
-                                    <input type="text" class="form-control" placeholder="Buscar categorias existentes..."
-                                        [value]="searchTerm" (input)="onSearch($event)" name="search">
+                                    <input type="text" class="form-control"
+                                        placeholder="Buscar categorias existentes..." [value]="searchTerm"
+                                        (input)="onSearch($event)" name="search">
                                     <div class="input-group-append">
                                         <button mat-raised-button type="button"
                                             class="btn btn-primary btn-round btn-just-icon" (click)="performSearch()">
@@ -72,8 +73,8 @@
                         <div class="row">
                             <!-- Nombres -->
                             <div class="col-md-6">
-                                <mat-form-field class="example-full-width">
-                                    <mat-label>Nombre</mat-label>
+                                <div class="example-full-width">
+                                    <label>Nombre</label>
                                     <input matInput placeholder="Ingrese los nombres" formControlName="producto_nombre"
                                         [class.is-invalid]="isFieldInvalid('producto_nombre')">
                                     <mat-error *ngIf="productsForm.get('producto_nombre')?.hasError('required')">
@@ -82,16 +83,17 @@
                                     <mat-error *ngIf="productsForm.get('producto_nombre')?.hasError('minlength')">
                                         Los nombres deben tener al menos 2 caracteres
                                     </mat-error>
-                                </mat-form-field>
+                                </div>
                             </div>
-                        </div> 
+                        </div>
 
                         <!-- Botones de acción -->
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="button-group text-center">
                                     <button mat-raised-button color="primary" type="submit"
-                                        [disabled]="productsForm.invalid || isSubmitting" class="btn btn-primary btn-round">
+                                        [disabled]="productsForm.invalid || isSubmitting"
+                                        class="btn btn-primary btn-round">
                                         <i class="material-icons">{{isEditMode ? 'edit' : 'save'}}</i>
                                         {{getSubmitButtonText()}}
                                         <div class="ripple-container"></div>
