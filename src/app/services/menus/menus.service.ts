@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 
 import {
@@ -11,6 +11,7 @@ import {
   ConsultarMenuResponse,
 } from "../../models/menu.model";
 import { ApiResponseModel } from "app/models/response-api.model";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -135,6 +136,9 @@ export class MenusService {
 
     return this.updateMenu({
       menu_id: id,
+      menu_nombre: "", // Campo requerido, se debe obtener del menú actual
+      menu_tipo: "", // Campo requerido, se debe obtener del menú actual
+      menu_path: "", // Campo requerido, se debe obtener del menú actual
       menu_estado: estado,
     } as Menu);
   }
@@ -144,5 +148,54 @@ export class MenusService {
    */
   getMenuById(id: number): Observable<ApiResponseModel<Menu[]>> {
     return this.getMenus({ menu_id: id });
+  }
+
+  /**
+   * Obtener menús permitidos para un perfil específico
+   * Utiliza el servicio de permisos para filtrar menús por perfil
+   */
+  getMenusByProfile(perfilId: number): Observable<ApiResponseModel<Menu[]>> {
+    console.log("=== SERVICIO: getMenusByProfile ===");
+    console.log("Perfil ID recibido:", perfilId);
+    console.log("Tipo de perfil ID:", typeof perfilId);
+    console.log("API URL base:", this.apiUrl);
+
+    const fullUrl = `${this.apiUrl}/consultarDatosMenuPorPerfil`;
+    console.log("URL completa:", fullUrl);
+
+    const requestBody = { perfil_id: perfilId };
+    console.log("Body de la petición:", requestBody);
+
+    const headers = this.getHeaders();
+    console.log("Headers:", headers);
+
+    console.log("🚀 Enviando petición HTTP POST...");
+
+    return this.http
+      .post<ApiResponseModel<Menu[]>>(fullUrl, requestBody, {
+        headers: headers,
+      })
+      .pipe(
+        map((response) => {
+          console.log("📦 Respuesta recibida del servidor:");
+          console.log("Response completa:", response);
+          return response;
+        })
+      );
+  }
+
+  /**
+   * Método de prueba para verificar conectividad
+   */
+  testConnection(): Observable<any> {
+    console.log(
+      "🧪 Probando conexión con:",
+      `${this.apiUrl}/consultarDatosMenu`
+    );
+    return this.http.post(
+      `${this.apiUrl}/consultarDatosMenu`,
+      {},
+      { headers: this.getHeaders() }
+    );
   }
 }

@@ -50,6 +50,9 @@ switch ($accion) {
     case 'consultar':
         get_users($data, $conn);
         break;
+    case 'consultarPerfil':
+        get_user_profile($data, $conn);
+        break;
     case 'eliminar':
         delete_users($data, $conn);
         break;
@@ -241,8 +244,17 @@ function login_user($data, $conn)
             return;
         }
 
-        // Aquí podrías generar un token JWT real. Por simplicidad, devolvemos un token estático.
-        $token = base64_encode(json_encode(['usuario_id' => $datos['usuario_id'], 'usuario_nombres' => $datos['usuario_nombres']]));
+        // Aquí podrías generar un token JWT real. Por simplicidad, devolvemos un token con datos del usuario.
+        $userData = [
+            'usuario_id' => $datos['usuario_id'],
+            'usuario_nombres' => $datos['usuario_nombres'],
+            'usuario_apellidos' => $datos['usuario_apellidos'],
+            'usuario_perfil' => $datos['usuario_perfil'],
+            'usuario_estado' => $datos['usuario_estado'],
+            'usuario_email' => $datos['usuario_email']
+        ];
+
+        $token = base64_encode(json_encode($userData));
 
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'Login exitoso', 'token' => $token]);
@@ -263,4 +275,52 @@ function validar_token($jwt, $clave)
     $valida_b64 = rtrim(strtr(base64_encode($valida), '+/', '-_'), '=');
 
     return hash_equals($firma, $valida_b64);
+}
+
+function get_user_profile($data, $conn)
+{
+    $usuario_id = intval($data['usuario_id'] ?? 0);
+
+    if ($usuario_id <= 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID de usuario es requerido']);
+        return;
+    }
+
+    try {
+        error_log("=== CONSULTANDO PERFIL DEL USUARIO ===");
+        error_log("Usuario ID recibido: " . $usuario_id);
+
+        $sql = "SELECT usuario_id, usuario_nombres, usuario_apellidos, usuario_email, 
+                       usuario_perfil, usuario_estado 
+                FROM usuarios 
+                WHERE usuario_id = :usuario_id 
+                AND usuario_estado = 'A'";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':usuario_id', $usuario_id);
+        $stmt->execute();
+
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Usuario no encontrado o inactivo']);
+            return;
+        }
+
+        error_log("Usuario encontrado: " . $usuario['usuario_nombres']);
+        error_log("Perfil del usuario: " . $usuario['usuario_perfil']);
+
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'data' => $usuario,
+            'message' => 'Perfil de usuario consultado correctamente'
+        ]);
+    } catch (PDOException $e) {
+        error_log("Error en get_user_profile: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['error' => 'Error al consultar perfil del usuario', 'detalle' => $e->getMessage()]);
+    }
 }

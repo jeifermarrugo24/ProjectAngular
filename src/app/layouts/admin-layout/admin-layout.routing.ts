@@ -5,6 +5,7 @@ import { UsersComponent } from "../../users/users.component";
 import { CategoriesComponent } from "../../categories/categories.component";
 import { ProductsComponent } from "../../products/products.component";
 import { RegistrarComponent as UserRegistrarComponent } from "../../users/registrar/registrar.component";
+import { PermisosComponent } from "../../permisos/permisos.component";
 import { MenusComponent } from "app/menus/menus.component";
 
 export const AdminLayoutRoutes: Routes = [
@@ -16,7 +17,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: "products", component: ProductsComponent },
   { path: "menus", component: DashboardComponent },
   { path: "roles", component: DashboardComponent },
-  { path: "permisos", component: DashboardComponent },
+  { path: "permisos", component: PermisosComponent },
   { path: "menus", component: MenusComponent },
   { path: "menus/registrar", component: MenusComponent },
 ];
