@@ -14,10 +14,7 @@
                 <div class="col-md-6">
                   <mat-form-field class="example-full-width">
                     <mat-label>Nombres</mat-label>
-                    <input matInput 
-                           type="text"
-                           formControlName="usuario_nombres"
-                           placeholder="Ingrese sus nombres">
+                    <input matInput type="text" formControlName="usuario_nombres" placeholder="Ingrese sus nombres">
                     <mat-error *ngIf="isFieldInvalid('usuario_nombres')">
                       {{ getFieldError('usuario_nombres') }}
                     </mat-error>
@@ -26,10 +23,7 @@
                 <div class="col-md-6">
                   <mat-form-field class="example-full-width">
                     <mat-label>Apellidos</mat-label>
-                    <input matInput 
-                           type="text"
-                           formControlName="usuario_apellidos"
-                           placeholder="Ingrese sus apellidos">
+                    <input matInput type="text" formControlName="usuario_apellidos" placeholder="Ingrese sus apellidos">
                     <mat-error *ngIf="isFieldInvalid('usuario_apellidos')">
                       {{ getFieldError('usuario_apellidos') }}
                     </mat-error>
@@ -41,10 +35,7 @@
                 <div class="col-md-12">
                   <mat-form-field class="example-full-width">
                     <mat-label>Email</mat-label>
-                    <input matInput 
-                           type="email"
-                           formControlName="usuario_email"
-                           placeholder="correo@ejemplo.com">
+                    <input matInput type="email" formControlName="usuario_email" placeholder="correo@ejemplo.com">
                     <mat-error *ngIf="isFieldInvalid('usuario_email')">
                       {{ getFieldError('usuario_email') }}
                     </mat-error>
@@ -55,9 +46,7 @@
               <!-- Sección de Contraseña -->
               <div class="row">
                 <div class="col-md-12">
-                  <mat-checkbox 
-                    [(ngModel)]="showPasswordFields" 
-                    [ngModelOptions]="{standalone: true}"
+                  <mat-checkbox [(ngModel)]="showPasswordFields" [ngModelOptions]="{standalone: true}"
                     (change)="togglePasswordFields()">
                     Cambiar contraseña
                   </mat-checkbox>
@@ -69,10 +58,8 @@
                   <div class="col-md-12">
                     <mat-form-field class="example-full-width">
                       <mat-label>Contraseña actual</mat-label>
-                      <input matInput 
-                             type="password"
-                             formControlName="current_password"
-                             placeholder="Ingrese su contraseña actual">
+                      <input matInput type="password" formControlName="current_password"
+                        placeholder="Ingrese su contraseña actual">
                       <mat-error *ngIf="isFieldInvalid('current_password')">
                         {{ getFieldError('current_password') }}
                       </mat-error>
@@ -84,10 +71,8 @@
                   <div class="col-md-6">
                     <mat-form-field class="example-full-width">
                       <mat-label>Nueva contraseña</mat-label>
-                      <input matInput 
-                             type="password"
-                             formControlName="new_password"
-                             placeholder="Ingrese la nueva contraseña">
+                      <input matInput type="password" formControlName="new_password"
+                        placeholder="Ingrese la nueva contraseña">
                       <mat-error *ngIf="isFieldInvalid('new_password')">
                         {{ getFieldError('new_password') }}
                       </mat-error>
@@ -96,10 +81,8 @@
                   <div class="col-md-6">
                     <mat-form-field class="example-full-width">
                       <mat-label>Confirmar contraseña</mat-label>
-                      <input matInput 
-                             type="password"
-                             formControlName="confirm_password"
-                             placeholder="Confirme la nueva contraseña">
+                      <input matInput type="password" formControlName="confirm_password"
+                        placeholder="Confirme la nueva contraseña">
                       <mat-error *ngIf="isFieldInvalid('confirm_password')">
                         {{ getFieldError('confirm_password') }}
                       </mat-error>
@@ -114,31 +97,25 @@
               <!-- Botones de acción -->
               <div class="row">
                 <div class="col-md-12">
-                  <button mat-raised-button 
-                          type="submit" 
-                          class="btn btn-primary pull-right"
-                          [disabled]="isSubmitting || profileForm.invalid || !validatePasswords()">
+                  <button mat-raised-button type="submit" class="btn btn-primary pull-right"
+                    [disabled]="isSubmitting || profileForm.invalid || !validatePasswords()">
                     <mat-icon *ngIf="isSubmitting">hourglass_empty</mat-icon>
                     {{ isSubmitting ? 'Actualizando...' : 'Actualizar Perfil' }}
                   </button>
-                  
-                  <button mat-raised-button 
-                          type="button" 
-                          class="btn btn-default pull-right"
-                          style="margin-right: 10px;"
-                          (click)="cancelEdit()"
-                          [disabled]="isSubmitting">
+
+                  <button mat-raised-button type="button" class="btn btn-default pull-right" style="margin-right: 10px;"
+                    (click)="cancelEdit()" [disabled]="isSubmitting">
                     Cancelar
                   </button>
                 </div>
               </div>
-              
+
               <div class="clearfix"></div>
             </form>
           </div>
         </div>
       </div>
-      
+
       <div class="col-md-4">
         <div class="card card-profile">
           <div class="card-avatar">
