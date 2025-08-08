@@ -22,7 +22,7 @@ export class UserService {
 
   private getHeaders(): HttpHeaders {
     // Obtener el token del localStorage si existe
-    const userData = localStorage.getItem("currentUser");
+    const userData = localStorage.getItem("userData");
     let token = environment.token || "";
 
     if (userData) {

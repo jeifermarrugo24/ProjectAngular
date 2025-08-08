@@ -1,192 +1,308 @@
-<div class="container-fluid">
+<div class="main-content">
+  <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header card-header-primary">
-                    <h3 class="card-title">{{ getFormTitle() }}</h3>
-                    <p class="card-category">{{ getFormSubtitle() }}</p>
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h3 class="card-title">{{ getFormTitle() }}</h3>
+            <p class="card-category">{{ getFormSubtitle() }}</p>
+          </div>
+          <div class="card-body">
+            <!-- Sección de búsqueda -->
+            <div class="search-section">
+              <div class="row">
+                <div class="col-md-12">
+                  <h4>Buscar Productos</h4>
+                  <div class="search-container">
+                    <div class="form-group search-input">
+                      <label for="searchInput">Buscar por nombre</label>
+                      <input
+                        id="searchInput"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="searchTerm"
+                        (input)="onSearch($event)"
+                        placeholder="Escriba para buscar..."
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      class="btn btn-secondary clear-search"
+                      (click)="clearSearch()"
+                      *ngIf="searchTerm.length > 0"
+                    >
+                      Limpiar
+                    </button>
+                  </div>
                 </div>
-                <div class="card-body">
-                    <!-- Sección de búsqueda -->
-                    <div class="search-section">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h4>Buscar Productos</h4>
-                                <div class="search-container">
-                                    <div class="form-group search-input">
-                                        <label for="searchInput">Buscar por nombre</label>
-                                        <input id="searchInput" type="text" class="form-control"
-                                            [(ngModel)]="searchTerm" (input)="onSearch($event)"
-                                            placeholder="Escriba para buscar...">
-                                    </div>
-                                    <button type="button" class="btn btn-secondary clear-search" (click)="clearSearch()"
-                                        *ngIf="searchTerm.length > 0">
-                                        Limpiar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Formulario de registro/edición -->
-                    <div class="form-section">
-                        <form [formGroup]="productsForm" (ngSubmit)="onSubmit()">
-                            <div class="form-title">
-                                <h4>{{ getFormTitle() }}</h4>
-                                <p class="form-subtitle">{{ getFormSubtitle() }}</p>
-                            </div>
-
-                            <div class="row form-row">
-                                <div class="col-md-6 form-field">
-                                    <div class="form-group">
-                                        <label for="producto_nombre">Nombre del Producto *</label>
-                                        <input id="producto_nombre" type="text" class="form-control"
-                                            formControlName="producto_nombre"
-                                            placeholder="Ej: iPhone 14, Laptop HP, etc."
-                                            [class.is-invalid]="isFieldInvalid('producto_nombre')">
-                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('producto_nombre')">
-                                            El nombre es requerido (mínimo 3 caracteres)
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 form-field">
-                                    <div class="form-group">
-                                        <label for="producto_categoria">Categoría *</label>
-                                        <select id="producto_categoria" class="form-control"
-                                            formControlName="producto_categoria"
-                                            [class.is-invalid]="isFieldInvalid('producto_categoria')">
-                                            <option value="">Seleccione una categoría</option>
-                                            <option *ngFor="let categoria of categorias"
-                                                [value]="categoria.categoria_id">
-                                                {{categoria.categoria_nombre}}
-                                            </option>
-                                        </select>
-                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('producto_categoria')">
-                                            La categoría es requerida
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row form-row">
-                                <div class="col-md-12 form-field">
-                                    <div class="form-group">
-                                        <label>Subcategorías (seleccione una o más)</label>
-                                        <div class="subcategorias-container"
-                                            style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: #f9f9f9;"
-                                            *ngIf="filteredSubcategorias.length > 0">
-                                            <div *ngFor="let subcategoria of filteredSubcategorias"
-                                                class="checkbox-item"
-                                                style="display: flex; align-items: center; margin-bottom: 8px;">
-                                                <input type="checkbox"
-                                                    [id]="'subcategoria_' + subcategoria.subcategoria_id"
-                                                    [checked]="isSubcategoriaSelected(subcategoria.subcategoria_id)"
-                                                    (change)="onSubcategoriaChange(subcategoria.subcategoria_id, $event.target.checked)"
-                                                    style="margin-right: 8px;">
-                                                <label [for]="'subcategoria_' + subcategoria.subcategoria_id"
-                                                    style="margin: 0; cursor: pointer; flex: 1;">
-                                                    {{subcategoria.subcategoria_nombre}}
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div *ngIf="filteredSubcategorias.length === 0 && productsForm.get('producto_categoria')?.value"
-                                            class="text-muted">
-                                            No hay subcategorías disponibles para esta categoría
-                                        </div>
-                                        <small class="form-text text-muted">
-                                            Primero seleccione una categoría para ver las subcategorías disponibles
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
-                                    <i class="material-icons">{{ isEditMode ? 'edit' : 'save' }}</i>
-                                    {{ getSubmitButtonText() }}
-                                </button>
-                                <button type="button" class="btn btn-secondary" (click)="onCancelEdit()"
-                                    [disabled]="isSubmitting">
-                                    <i class="material-icons">{{ getResetButtonIcon() }}</i>
-                                    {{ getResetButtonText() }}
-                                </button>
-                                <button type="button" class="btn btn-info" (click)="onCancel()" *ngIf="!isEditMode">
-                                    <i class="material-icons">arrow_back</i>
-                                    Volver
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Tabla de resultados -->
-                    <div class="table-section" *ngIf="searchResults.length > 0">
-                        <div class="card-header">
-                            <h4 class="card-title">Lista de Productos</h4>
-                            <p class="card-category">
-                                Mostrando {{ searchResults.length }} de {{ allProducts.length }} productos
-                            </p>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre del Producto</th>
-                                        <th>Categoría</th>
-                                        <th>Subcategoría</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let producto of searchResults">
-                                        <td>{{ producto.producto_id }}</td>
-                                        <td>{{ producto.producto_nombre }}</td>
-                                        <td>{{ producto.categoria_nombre || 'Sin categoría' }}</td>
-                                        <td>
-                                            <span
-                                                *ngIf="producto.subcategorias_nombres && producto.subcategorias_nombres !== 'Sin subcategorías'"
-                                                style="font-size: 12px;">
-                                                {{ producto.subcategorias_nombres }}
-                                            </span>
-                                            <span
-                                                *ngIf="!producto.subcategorias_nombres || producto.subcategorias_nombres === 'Sin subcategorías'"
-                                                class="text-muted" style="font-style: italic;">
-                                                Sin subcategorías
-                                            </span>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                (click)="editProduct(producto)" title="Editar producto">
-                                                <i class="material-icons">edit</i>
-                                            </button>
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                (click)="deleteProduct(producto.producto_id!)"
-                                                title="Eliminar producto">
-                                                <i class="material-icons">delete</i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Estado vacío cuando no hay resultados de búsqueda -->
-                    <div class="empty-state" *ngIf="searchTerm.length >= 2 && searchResults.length === 0">
-                        <i class="material-icons">search_off</i>
-                        <h4>No se encontraron resultados</h4>
-                        <p>No hay productos que coincidan con "<strong>{{ searchTerm }}</strong>".</p>
-                    </div>
-
-                    <!-- Estado vacío cuando no hay productos -->
-                    <div class="empty-state" *ngIf="allProducts.length === 0 && searchTerm.length === 0">
-                        <i class="material-icons">inventory_2</i>
-                        <h4>No hay productos registrados</h4>
-                        <p>Comienza registrando tu primer producto usando el formulario anterior.</p>
-                    </div>
-                </div>
+              </div>
             </div>
+
+            <!-- Formulario de registro/edición -->
+            <div class="form-section">
+              <form [formGroup]="productsForm" (ngSubmit)="onSubmit()">
+                <div class="form-title">
+                  <h4>{{ getFormTitle() }}</h4>
+                  <p class="form-subtitle">{{ getFormSubtitle() }}</p>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-md-6 form-field">
+                    <div class="form-group">
+                      <label for="producto_nombre">Nombre del Producto *</label>
+                      <input
+                        id="producto_nombre"
+                        type="text"
+                        class="form-control"
+                        formControlName="producto_nombre"
+                        placeholder="Ej: iPhone 14, Laptop HP, etc."
+                        [class.is-invalid]="isFieldInvalid('producto_nombre')"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="isFieldInvalid('producto_nombre')"
+                      >
+                        El nombre es requerido (mínimo 3 caracteres)
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 form-field">
+                    <div class="form-group">
+                      <label for="producto_categoria">Categoría *</label>
+                      <select
+                        id="producto_categoria"
+                        class="form-control"
+                        formControlName="producto_categoria"
+                        [class.is-invalid]="
+                          isFieldInvalid('producto_categoria')
+                        "
+                      >
+                        <option value="">Seleccione una categoría</option>
+                        <option
+                          *ngFor="let categoria of categorias"
+                          [value]="categoria.categoria_id"
+                        >
+                          {{ categoria.categoria_nombre }}
+                        </option>
+                      </select>
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="isFieldInvalid('producto_categoria')"
+                      >
+                        La categoría es requerida
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row form-row">
+                  <div class="col-md-12 form-field">
+                    <div class="form-group">
+                      <label>Subcategorías (seleccione una o más)</label>
+                      <div
+                        class="subcategorias-container"
+                        style="
+                          max-height: 200px;
+                          overflow-y: auto;
+                          border: 1px solid #ddd;
+                          padding: 10px;
+                          border-radius: 4px;
+                          background-color: #f9f9f9;
+                        "
+                        *ngIf="filteredSubcategorias.length > 0"
+                      >
+                        <div
+                          *ngFor="let subcategoria of filteredSubcategorias"
+                          class="checkbox-item"
+                          style="
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: 8px;
+                          "
+                        >
+                          <input
+                            type="checkbox"
+                            [id]="
+                              'subcategoria_' + subcategoria.subcategoria_id
+                            "
+                            [checked]="
+                              isSubcategoriaSelected(
+                                subcategoria.subcategoria_id
+                              )
+                            "
+                            (change)="
+                              onSubcategoriaChange(
+                                subcategoria.subcategoria_id,
+                                $event.target.checked
+                              )
+                            "
+                            style="margin-right: 8px"
+                          />
+                          <label
+                            [for]="
+                              'subcategoria_' + subcategoria.subcategoria_id
+                            "
+                            style="margin: 0; cursor: pointer; flex: 1"
+                          >
+                            {{ subcategoria.subcategoria_nombre }}
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        *ngIf="
+                          filteredSubcategorias.length === 0 &&
+                          productsForm.get('producto_categoria')?.value
+                        "
+                        class="text-muted"
+                      >
+                        No hay subcategorías disponibles para esta categoría
+                      </div>
+                      <small class="form-text text-muted">
+                        Primero seleccione una categoría para ver las
+                        subcategorías disponibles
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="isSubmitting"
+                  >
+                    <i class="material-icons">{{
+                      isEditMode ? "edit" : "save"
+                    }}</i>
+                    {{ getSubmitButtonText() }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="onCancelEdit()"
+                    [disabled]="isSubmitting"
+                  >
+                    <i class="material-icons">{{ getResetButtonIcon() }}</i>
+                    {{ getResetButtonText() }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-info"
+                    (click)="onCancel()"
+                    *ngIf="!isEditMode"
+                  >
+                    <i class="material-icons">arrow_back</i>
+                    Volver
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tabla de resultados -->
+            <div class="table-section" *ngIf="searchResults.length > 0">
+              <div class="card-header">
+                <h4 class="card-title">Lista de Productos</h4>
+                <p class="card-category">
+                  Mostrando {{ searchResults.length }} de
+                  {{ allProducts.length }} productos
+                </p>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre del Producto</th>
+                      <th>Categoría</th>
+                      <th>Subcategoría</th>
+                      <th class="text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let producto of searchResults">
+                      <td>{{ producto.producto_id }}</td>
+                      <td>{{ producto.producto_nombre }}</td>
+                      <td>
+                        {{ producto.categoria_nombre || "Sin categoría" }}
+                      </td>
+                      <td>
+                        <span
+                          *ngIf="
+                            producto.subcategorias_nombres &&
+                            producto.subcategorias_nombres !==
+                              'Sin subcategorías'
+                          "
+                          style="font-size: 12px"
+                        >
+                          {{ producto.subcategorias_nombres }}
+                        </span>
+                        <span
+                          *ngIf="
+                            !producto.subcategorias_nombres ||
+                            producto.subcategorias_nombres ===
+                              'Sin subcategorías'
+                          "
+                          class="text-muted"
+                          style="font-style: italic"
+                        >
+                          Sin subcategorías
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-sm"
+                          (click)="editProduct(producto)"
+                          title="Editar producto"
+                        >
+                          <i class="material-icons">edit</i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-danger btn-sm"
+                          (click)="deleteProduct(producto.producto_id!)"
+                          title="Eliminar producto"
+                        >
+                          <i class="material-icons">delete</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Estado vacío cuando no hay resultados de búsqueda -->
+            <div
+              class="empty-state"
+              *ngIf="searchTerm.length >= 2 && searchResults.length === 0"
+            >
+              <i class="material-icons">search_off</i>
+              <h4>No se encontraron resultados</h4>
+              <p>
+                No hay productos que coincidan con "<strong>{{
+                  searchTerm
+                }}</strong
+                >".
+              </p>
+            </div>
+
+            <!-- Estado vacío cuando no hay productos -->
+            <div
+              class="empty-state"
+              *ngIf="allProducts.length === 0 && searchTerm.length === 0"
+            >
+              <i class="material-icons">inventory_2</i>
+              <h4>No hay productos registrados</h4>
+              <p>
+                Comienza registrando tu primer producto usando el formulario
+                anterior.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
