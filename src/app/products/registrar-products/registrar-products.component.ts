@@ -11,7 +11,9 @@ interface Producto {
   producto_id?: number;
   producto_nombre: string;
   producto_categoria: number;
-  producto_subcaegoria?: number;
+  subcategorias_ids?: number[];
+  categoria_nombre?: string;
+  subcategorias_nombres?: string;
 }
 
 @Component({
@@ -45,7 +47,6 @@ export class RegistrarProductsComponent implements OnInit {
   ngOnInit(): void {
     this.loadInitialProducts();
     this.loadCategorias();
-    this.loadSubcategorias();
   }
 
   private loadInitialProducts(): void {
@@ -65,30 +66,25 @@ export class RegistrarProductsComponent implements OnInit {
   }
 
   private loadCategorias(): void {
-    this.categoriesService.getCategories().subscribe((res) => {
-      if ("data" in res) {
-        this.categorias = res.data.filter(
-          (cat) => cat.categoria_estado === "A"
-        );
-        console.log("Categorías cargadas:", this.categorias.length);
-      }
-      if ("error" in res) {
-        console.error("Error al cargar categorías:", res.error);
-      }
-    });
-  }
-
-  private loadSubcategorias(): void {
-    this.subcategoriesService.getSubCategorie().subscribe((res) => {
-      if ("data" in res) {
-        this.subcategorias = res.data.filter(
-          (sub) => sub.subcategoria_estado === "A"
-        );
-        console.log("Subcategorías cargadas:", this.subcategorias.length);
-      }
-      if ("error" in res) {
-        console.error("Error al cargar subcategorías:", res.error);
-      }
+    console.log("Cargando categorías desde la API...");
+    this.categoriesService.getCategories().subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.categorias = res.data.filter(
+            (cat) =>
+              cat.categoria_estado === "activo" || cat.categoria_estado === "A"
+          );
+          console.log("Categorías cargadas:", this.categorias.length);
+        } else {
+          console.error("Error en respuesta de categorías:", res);
+          this.categorias = [];
+        }
+      },
+      error: (error) => {
+        console.error("Error al cargar categorías:", error);
+        this.categorias = [];
+        alert("Error al cargar las categorías. Por favor, recargue la página.");
+      },
     });
   }
 
@@ -97,11 +93,10 @@ export class RegistrarProductsComponent implements OnInit {
       producto_id: [null],
       producto_nombre: ["", [Validators.required, Validators.minLength(3)]],
       producto_categoria: ["", Validators.required],
-      producto_subcaegoria: [""], // Opcional
+      subcategorias_seleccionadas: [[]],
       accion: ["registrar"],
     });
 
-    // Escuchar cambios en la categoría para filtrar subcategorías
     this.productsForm
       .get("producto_categoria")
       ?.valueChanges.subscribe((categoriaId) => {
@@ -110,16 +105,78 @@ export class RegistrarProductsComponent implements OnInit {
   }
 
   onCategoriaChange(categoriaId: number): void {
+    console.log("Categoría seleccionada:", categoriaId);
+
     if (categoriaId) {
-      this.filteredSubcategorias = this.subcategorias.filter(
-        (sub) => sub.subcategoria_categoria === Number(categoriaId)
-      );
+      this.productsForm.get("subcategorias_seleccionadas")?.setValue([]);
+      this.filteredSubcategorias = [];
+
+      const consultaData = {
+        subcategoria_categoria: categoriaId,
+      };
+
+      this.subcategoriesService.getSubCategorie(consultaData).subscribe({
+        next: (res) => {
+          console.log("Respuesta de subcategorías:", res);
+
+          if (res.success && res.data) {
+            this.filteredSubcategorias = res.data.filter(
+              (sub) =>
+                sub.subcategoria_categoria === Number(categoriaId) &&
+                (sub.subcategoria_estado === "activo" ||
+                  sub.subcategoria_estado === "A")
+            );
+
+            console.log(
+              "Subcategorías filtradas para categoría",
+              categoriaId,
+              ":",
+              this.filteredSubcategorias
+            );
+          } else {
+            console.warn(
+              "No se encontraron subcategorías o respuesta inválida:",
+              res
+            );
+            this.filteredSubcategorias = [];
+          }
+        },
+        error: (error) => {
+          console.error("Error al cargar subcategorías:", error);
+          this.filteredSubcategorias = [];
+          alert("Error al cargar las subcategorías de esta categoría.");
+        },
+      });
     } else {
       this.filteredSubcategorias = [];
+      this.productsForm.get("subcategorias_seleccionadas")?.setValue([]);
+    }
+  }
+
+  onSubcategoriaChange(subcategoriaId: number, isChecked: boolean): void {
+    const subcategoriasSeleccionadas =
+      this.productsForm.get("subcategorias_seleccionadas")?.value || [];
+
+    if (isChecked) {
+      if (!subcategoriasSeleccionadas.includes(subcategoriaId)) {
+        subcategoriasSeleccionadas.push(subcategoriaId);
+      }
+    } else {
+      const index = subcategoriasSeleccionadas.indexOf(subcategoriaId);
+      if (index > -1) {
+        subcategoriasSeleccionadas.splice(index, 1);
+      }
     }
 
-    // Limpiar la subcategoría seleccionada cuando cambia la categoría
-    this.productsForm.get("producto_subcaegoria")?.setValue("");
+    this.productsForm
+      .get("subcategorias_seleccionadas")
+      ?.setValue(subcategoriasSeleccionadas);
+  }
+
+  isSubcategoriaSelected(subcategoriaId: number): boolean {
+    const subcategoriasSeleccionadas =
+      this.productsForm.get("subcategorias_seleccionadas")?.value || [];
+    return subcategoriasSeleccionadas.includes(subcategoriaId);
   }
 
   onSearch(event: any): void {
@@ -131,26 +188,28 @@ export class RegistrarProductsComponent implements OnInit {
   performSearch(): void {
     if (this.searchTerm.length === 0) {
       this.searchResults = [...this.allProducts];
+      console.log("Búsqueda vacía, mostrando todos los productos");
       return;
     }
 
-    if (this.searchTerm.length < 2) {
-      this.searchResults = [];
-      return;
+    if (this.searchTerm.length >= 2) {
+      const searchData = {
+        producto_nombre: this.searchTerm,
+      };
+
+      this.productsService.getProducts(searchData).subscribe((res) => {
+        if ("data" in res) {
+          this.searchResults = res.data;
+          console.log("Resultados de búsqueda:", this.searchResults.length);
+        }
+        if ("error" in res) {
+          console.log("Error en búsqueda:", res.error);
+          this.searchResults = [];
+        }
+      });
+    } else {
+      this.searchResults = [...this.allProducts];
     }
-
-    this.searchResults = this.allProducts.filter((producto) => {
-      const matchNombre = producto.producto_nombre
-        ?.toLowerCase()
-        .includes(this.searchTerm.toLowerCase());
-
-      return matchNombre;
-    });
-
-    console.log(
-      `Búsqueda: "${this.searchTerm}" - Resultados:`,
-      this.searchResults.length
-    );
   }
 
   clearSearch(): void {
@@ -159,8 +218,30 @@ export class RegistrarProductsComponent implements OnInit {
     console.log("Búsqueda limpiada, mostrando todos los productos");
   }
 
-  refreshUsersList(): void {
-    this.loadInitialProducts();
+  resetForm(): void {
+    this.productsForm.reset();
+    this.productsForm.patchValue({
+      accion: "registrar",
+    });
+    this.isEditMode = false;
+    this.currentProductId = null;
+    this.filteredSubcategorias = [];
+  }
+
+  cancelEdit(): void {
+    this.resetForm();
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.productsForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  getSubmitButtonText(): string {
+    if (this.isSubmitting) {
+      return this.isEditMode ? "Actualizando..." : "Guardando...";
+    }
+    return this.isEditMode ? "Actualizar Producto" : "Guardar Producto";
   }
 
   getFormTitle(): string {
@@ -170,36 +251,30 @@ export class RegistrarProductsComponent implements OnInit {
   getFormSubtitle(): string {
     return this.isEditMode
       ? "Modifica los datos del producto seleccionado"
-      : "Complete el formulario para registrar un nuevo producto";
-  }
-
-  getSubmitButtonText(): string {
-    return this.isEditMode ? "Actualizar Producto" : "Guardar Producto";
-  }
-
-  getResetButtonText(): string {
-    return this.isEditMode ? "Cancelar Edición" : "Limpiar Formulario";
+      : "Completa la información para registrar un nuevo producto";
   }
 
   getResetButtonIcon(): string {
-    return this.isEditMode ? "close" : "refresh";
+    return this.isEditMode ? "cancel" : "refresh";
   }
 
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.productsForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+  getResetButtonText(): string {
+    return this.isEditMode ? "Cancelar" : "Limpiar";
   }
 
   onSubmit(): void {
     if (this.productsForm.invalid) {
-      this.markFormGroupTouched();
+      Object.keys(this.productsForm.controls).forEach((key) => {
+        this.productsForm.get(key)?.markAsTouched();
+      });
       return;
     }
 
     this.isSubmitting = true;
-    const formData = this.productsForm.value;
 
-    console.log("Datos del formulario:", formData);
+    const formData = {
+      ...this.productsForm.value,
+    };
 
     if (this.isEditMode) {
       this.updateProduct(formData);
@@ -261,8 +336,14 @@ export class RegistrarProductsComponent implements OnInit {
     this.isEditMode = true;
     this.currentProductId = producto.producto_id || null;
 
+    if (producto.producto_categoria) {
+      this.onCategoriaChange(producto.producto_categoria);
+    }
+
     this.productsForm.patchValue({
       producto_nombre: producto.producto_nombre,
+      producto_categoria: producto.producto_categoria || "",
+      subcategorias_seleccionadas: producto.subcategorias_ids || [],
       accion: "editar",
     });
 
@@ -302,23 +383,7 @@ export class RegistrarProductsComponent implements OnInit {
     this.router.navigate(["/products"]);
   }
 
-  private cancelEdit(): void {
-    this.isEditMode = false;
-    this.currentProductId = null;
-    this.resetForm();
-  }
-
-  private resetForm(): void {
-    this.productsForm.reset();
-    this.productsForm.patchValue({
-      accion: "registrar",
-    });
-  }
-
-  private markFormGroupTouched(): void {
-    Object.keys(this.productsForm.controls).forEach((key) => {
-      const control = this.productsForm.get(key);
-      control?.markAsTouched();
-    });
+  isMobileMenu() {
+    return window.innerWidth <= 991;
   }
 }

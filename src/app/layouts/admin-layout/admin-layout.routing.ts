@@ -26,7 +26,7 @@ export const AdminLayoutRoutes: Routes = [
   },
   { path: "products", component: ProductsComponent },
   {
-    path: "products/registrar",
+    path: "products/registrar-products",
     component: RegistrarProductsComponent,
   },
   { path: "permisos", component: PermisosComponent },

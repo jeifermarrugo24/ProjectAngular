@@ -57,21 +57,72 @@ switch ($accion) {
 function save_products($data, $conn)
 {
     $producto_nombre = $data['producto_nombre'] ?? '';
+    $producto_categoria = intval($data['producto_categoria'] ?? 0);
+    $subcategorias_seleccionadas = $data['subcategorias_seleccionadas'] ?? [];
 
-    if (!$producto_nombre) {
+    if (!$producto_nombre || $producto_categoria <= 0) {
         http_response_code(400);
-        echo json_encode(['error' => 'Todos los campos son obligatorios']);
+        echo json_encode(['error' => 'El nombre del producto y la categoría son obligatorios']);
         return;
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO productos (producto_nombre) VALUES (:producto_nombre)");
-        $stmt->bindParam(':producto_nombre', $producto_nombre);
+        // Comenzar transacción
+        $conn->beginTransaction();
+
+        // Verificar que la categoría existe
+        $stmt = $conn->prepare("SELECT categoria_id FROM categorias WHERE categoria_id = :categoria_id");
+        $stmt->bindParam(':categoria_id', $producto_categoria);
         $stmt->execute();
 
+        if ($stmt->rowCount() === 0) {
+            $conn->rollBack();
+            http_response_code(400);
+            echo json_encode(['error' => 'La categoría seleccionada no existe']);
+            return;
+        }
+
+        // Verificar que las subcategorías existen y pertenecen a la categoría
+        if (!empty($subcategorias_seleccionadas)) {
+            $placeholders = str_repeat('?,', count($subcategorias_seleccionadas) - 1) . '?';
+            $stmt = $conn->prepare("SELECT COUNT(*) as count FROM subcategorias WHERE subcategoria_id IN ($placeholders) AND subcategoria_categoria = ?");
+            $params = array_merge($subcategorias_seleccionadas, [$producto_categoria]);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['count'] != count($subcategorias_seleccionadas)) {
+                $conn->rollBack();
+                http_response_code(400);
+                echo json_encode(['error' => 'Algunas subcategorías seleccionadas no existen o no pertenecen a la categoría']);
+                return;
+            }
+        }
+
+        // Insertar el producto (solo con categoría principal)
+        $stmt = $conn->prepare("INSERT INTO productos (producto_nombre, producto_categoria) VALUES (:producto_nombre, :producto_categoria)");
+        $stmt->bindParam(':producto_nombre', $producto_nombre);
+        $stmt->bindParam(':producto_categoria', $producto_categoria);
+        $stmt->execute();
+
+        $producto_id = $conn->lastInsertId();
+
+        // Insertar las relaciones con subcategorías en la tabla categorias_productos
+        if (!empty($subcategorias_seleccionadas)) {
+            foreach ($subcategorias_seleccionadas as $subcategoria_id) {
+                $stmt = $conn->prepare("INSERT INTO categorias_productos (categorias_productos_id_producto, categorias_productos_id_categoria) VALUES (:producto_id, :subcategoria_id)");
+                $stmt->bindParam(':producto_id', $producto_id);
+                $stmt->bindParam(':subcategoria_id', $subcategoria_id);
+                $stmt->execute();
+            }
+        }
+
+        // Confirmar transacción
+        $conn->commit();
+
         http_response_code(200);
-        echo json_encode(['success' => true, 'message' => 'Producto guardado correctamente', 'id_registro' => $conn->lastInsertId()]);
+        echo json_encode(['success' => true, 'message' => 'Producto guardado correctamente', 'id_registro' => $producto_id]);
     } catch (PDOException $e) {
+        $conn->rollBack();
         http_response_code(500);
         echo json_encode(['error' => 'Error al guardar el producto', 'detalle' => $e->getMessage()]);
     }
@@ -83,23 +134,58 @@ function get_products($data, $conn)
     $params = [];
 
     if (!empty($data['producto_nombre'])) {
-        $conditions .= " AND producto_nombre LIKE :producto_nombre";
+        $conditions .= " AND p.producto_nombre LIKE :producto_nombre";
         $params[':producto_nombre'] = "%" . $data['producto_nombre'] . "%";
     }
 
     if (!empty($data['producto_id'])) {
-        $conditions .= " AND producto_id = :producto_id";
+        $conditions .= " AND p.producto_id = :producto_id";
         $params[':producto_id'] = intval($data['producto_id']);
     }
 
+    if (!empty($data['producto_categoria'])) {
+        $conditions .= " AND p.producto_categoria = :producto_categoria";
+        $params[':producto_categoria'] = intval($data['producto_categoria']);
+    }
+
     try {
-        $stmt = $conn->prepare("SELECT * FROM productos $conditions");
+        // Consulta para obtener productos con sus subcategorías
+        $sql = "SELECT 
+                    p.producto_id,
+                    p.producto_nombre,
+                    p.producto_categoria,
+                    c.categoria_nombre,
+                    GROUP_CONCAT(s.subcategoria_id) as subcategorias_ids,
+                    GROUP_CONCAT(s.subcategoria_nombre SEPARATOR ', ') as subcategorias_nombres
+                FROM productos p
+                LEFT JOIN categorias c ON p.producto_categoria = c.categoria_id
+                LEFT JOIN categorias_productos cp ON p.producto_id = cp.categorias_productos_id_producto
+                LEFT JOIN subcategorias s ON cp.categorias_productos_id_categoria = s.subcategoria_id
+                $conditions
+                GROUP BY p.producto_id, p.producto_nombre, p.producto_categoria, c.categoria_nombre
+                ORDER BY p.producto_nombre";
+
+        $stmt = $conn->prepare($sql);
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
 
         $stmt->execute();
         $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Procesar los resultados para convertir las subcategorías en arrays
+        foreach ($datos as &$producto) {
+            if ($producto['subcategorias_ids']) {
+                $producto['subcategorias_ids'] = explode(',', $producto['subcategorias_ids']);
+                $producto['subcategorias_ids'] = array_map('intval', $producto['subcategorias_ids']);
+            } else {
+                $producto['subcategorias_ids'] = [];
+            }
+
+            if (!$producto['subcategorias_nombres']) {
+                $producto['subcategorias_nombres'] = 'Sin subcategorías';
+            }
+        }
 
         if (!$datos) {
             http_response_code(404);
@@ -141,22 +227,88 @@ function update_products($data, $conn)
 {
     $producto_id = intval($data['producto_id'] ?? 0);
     $producto_nombre = $data['producto_nombre'] ?? '';
+    $producto_categoria = intval($data['producto_categoria'] ?? 0);
+    $subcategorias_seleccionadas = $data['subcategorias_seleccionadas'] ?? [];
 
-    if ($producto_id <= 0 || !$producto_nombre) {
+    if ($producto_id <= 0 || !$producto_nombre || $producto_categoria <= 0) {
         http_response_code(400);
-        echo json_encode(['error' => 'Campos invalidos']);
+        echo json_encode(['error' => 'El ID del producto, nombre y categoría son obligatorios']);
         return;
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE productos SET producto_nombre = :producto_nombre WHERE producto_id = :producto_id");
-        $stmt->bindParam(':producto_nombre', $producto_nombre);
+        // Comenzar transacción
+        $conn->beginTransaction();
+
+        // Verificar que el producto existe
+        $stmt = $conn->prepare("SELECT producto_id FROM productos WHERE producto_id = :producto_id");
         $stmt->bindParam(':producto_id', $producto_id);
         $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+            $conn->rollBack();
+            http_response_code(404);
+            echo json_encode(['error' => 'El producto no existe']);
+            return;
+        }
+
+        // Verificar que la categoría existe
+        $stmt = $conn->prepare("SELECT categoria_id FROM categorias WHERE categoria_id = :categoria_id");
+        $stmt->bindParam(':categoria_id', $producto_categoria);
+        $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+            $conn->rollBack();
+            http_response_code(400);
+            echo json_encode(['error' => 'La categoría seleccionada no existe']);
+            return;
+        }
+
+        // Verificar que las subcategorías existen y pertenecen a la categoría
+        if (!empty($subcategorias_seleccionadas)) {
+            $placeholders = str_repeat('?,', count($subcategorias_seleccionadas) - 1) . '?';
+            $stmt = $conn->prepare("SELECT COUNT(*) as count FROM subcategorias WHERE subcategoria_id IN ($placeholders) AND subcategoria_categoria = ?");
+            $params = array_merge($subcategorias_seleccionadas, [$producto_categoria]);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($result['count'] != count($subcategorias_seleccionadas)) {
+                $conn->rollBack();
+                http_response_code(400);
+                echo json_encode(['error' => 'Algunas subcategorías seleccionadas no existen o no pertenecen a la categoría']);
+                return;
+            }
+        }
+
+        // Actualizar el producto
+        $stmt = $conn->prepare("UPDATE productos SET producto_nombre = :producto_nombre, producto_categoria = :producto_categoria WHERE producto_id = :producto_id");
+        $stmt->bindParam(':producto_nombre', $producto_nombre);
+        $stmt->bindParam(':producto_categoria', $producto_categoria);
+        $stmt->bindParam(':producto_id', $producto_id);
+        $stmt->execute();
+
+        // Eliminar relaciones existentes
+        $stmt = $conn->prepare("DELETE FROM categorias_productos WHERE categorias_productos_id_producto = :producto_id");
+        $stmt->bindParam(':producto_id', $producto_id);
+        $stmt->execute();
+
+        // Insertar nuevas relaciones con subcategorías
+        if (!empty($subcategorias_seleccionadas)) {
+            foreach ($subcategorias_seleccionadas as $subcategoria_id) {
+                $stmt = $conn->prepare("INSERT INTO categorias_productos (categorias_productos_id_producto, categorias_productos_id_categoria) VALUES (:producto_id, :subcategoria_id)");
+                $stmt->bindParam(':producto_id', $producto_id);
+                $stmt->bindParam(':subcategoria_id', $subcategoria_id);
+                $stmt->execute();
+            }
+        }
+
+        // Confirmar transacción
+        $conn->commit();
 
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'Producto actualizado correctamente']);
     } catch (PDOException $e) {
+        $conn->rollBack();
         http_response_code(500);
         echo json_encode(['error' => 'Error al actualizar el producto', 'detalle' => $e->getMessage()]);
     }

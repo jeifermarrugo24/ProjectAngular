@@ -9,10 +9,6 @@ import { AppComponent } from "./app.component";
 import { AdminLayoutComponent } from "./layouts/admin-layout/admin-layout.component";
 import { PrivateComponent } from "./private/private.component";
 import { ConfigUserComponent } from "./config-user/config-user.component";
-import { CategoriesComponent } from "./categories/categories.component";
-import { ProductsComponent } from "./products/products.component";
-import { SubcategoriesComponent } from './subcategories/subcategories.component';
-import { MenusComponent } from './menus/menus.component';
 
 @NgModule({
   imports: [
@@ -29,10 +25,6 @@ import { MenusComponent } from './menus/menus.component';
     AdminLayoutComponent,
     PrivateComponent,
     ConfigUserComponent,
-    CategoriesComponent,
-    ProductsComponent,
-    SubcategoriesComponent,
-    MenusComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

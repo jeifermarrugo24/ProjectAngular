@@ -25,6 +25,10 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { CategoriesComponent } from "../../categories/categories.component";
+import { SubcategoriesComponent } from "../../subcategories/subcategories.component";
+import { ProductsComponent } from "../../products/products.component";
+import { MenusComponent } from "../../menus/menus.component";
 
 @NgModule({
   imports: [
@@ -47,9 +51,13 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
     UserProfileComponent,
     UsersComponent,
     RegistrarComponent,
+    CategoriesComponent,
     RegistrarCategoriaComponent,
+    SubcategoriesComponent,
     RegistrarSubcategoriaComponent,
+    ProductsComponent,
     RegistrarProductsComponent,
+    MenusComponent,
     PermisosComponent,
     TypographyComponent,
     IconsComponent,

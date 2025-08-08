@@ -70,20 +70,32 @@
                             </div>
 
                             <div class="row form-row">
-                                <div class="col-md-6 form-field">
+                                <div class="col-md-12 form-field">
                                     <div class="form-group">
-                                        <label for="producto_subcaegoria">Subcategoría</label>
-                                        <select id="producto_subcaegoria" class="form-control"
-                                            formControlName="producto_subcaegoria"
-                                            [disabled]="!productsForm.get('producto_categoria')?.value">
-                                            <option value="">Seleccione una subcategoría (opcional)</option>
-                                            <option *ngFor="let subcategoria of filteredSubcategorias"
-                                                [value]="subcategoria.subcategoria_id">
-                                                {{subcategoria.subcategoria_nombre}}
-                                            </option>
-                                        </select>
+                                        <label>Subcategorías (seleccione una o más)</label>
+                                        <div class="subcategorias-container"
+                                            style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: #f9f9f9;"
+                                            *ngIf="filteredSubcategorias.length > 0">
+                                            <div *ngFor="let subcategoria of filteredSubcategorias"
+                                                class="checkbox-item"
+                                                style="display: flex; align-items: center; margin-bottom: 8px;">
+                                                <input type="checkbox"
+                                                    [id]="'subcategoria_' + subcategoria.subcategoria_id"
+                                                    [checked]="isSubcategoriaSelected(subcategoria.subcategoria_id)"
+                                                    (change)="onSubcategoriaChange(subcategoria.subcategoria_id, $event.target.checked)"
+                                                    style="margin-right: 8px;">
+                                                <label [for]="'subcategoria_' + subcategoria.subcategoria_id"
+                                                    style="margin: 0; cursor: pointer; flex: 1;">
+                                                    {{subcategoria.subcategoria_nombre}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="filteredSubcategorias.length === 0 && productsForm.get('producto_categoria')?.value"
+                                            class="text-muted">
+                                            No hay subcategorías disponibles para esta categoría
+                                        </div>
                                         <small class="form-text text-muted">
-                                            Primero seleccione una categoría
+                                            Primero seleccione una categoría para ver las subcategorías disponibles
                                         </small>
                                     </div>
                                 </div>
@@ -121,6 +133,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Nombre del Producto</th>
+                                        <th>Categoría</th>
+                                        <th>Subcategoría</th>
                                         <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
@@ -128,6 +142,19 @@
                                     <tr *ngFor="let producto of searchResults">
                                         <td>{{ producto.producto_id }}</td>
                                         <td>{{ producto.producto_nombre }}</td>
+                                        <td>{{ producto.categoria_nombre || 'Sin categoría' }}</td>
+                                        <td>
+                                            <span
+                                                *ngIf="producto.subcategorias_nombres && producto.subcategorias_nombres !== 'Sin subcategorías'"
+                                                style="font-size: 12px;">
+                                                {{ producto.subcategorias_nombres }}
+                                            </span>
+                                            <span
+                                                *ngIf="!producto.subcategorias_nombres || producto.subcategorias_nombres === 'Sin subcategorías'"
+                                                class="text-muted" style="font-style: italic;">
+                                                Sin subcategorías
+                                            </span>
+                                        </td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-primary btn-sm"
                                                 (click)="editProduct(producto)" title="Editar producto">

@@ -2,7 +2,12 @@ export interface Productos {
   producto_id?: number; // Opcional porque no se envía al guardar
   producto_nombre: string;
   producto_categoria: number;
-  producto_subcaegoria?: number; // Opcional según la DB
+  producto_subcategoria?: number; // Opcional según la DB
+  subcategorias_seleccionadas?: number[]; // Array de IDs de subcategorías seleccionadas
+  subcategorias_ids?: number[]; // Para respuestas de consulta
+  categoria_nombre?: string; // Para mostrar en la UI
+  subcategorias_nombres?: string; // Para mostrar en la UI
+  accion?: string; // Para determinar si es registrar o editar
 }
 
 export interface GuardarProductsResponse {
