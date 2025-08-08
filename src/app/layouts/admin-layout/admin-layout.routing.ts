@@ -8,6 +8,7 @@ import { SubcategoriesComponent } from "../../subcategories/subcategories.compon
 import { RegistrarComponent as UserRegistrarComponent } from "../../users/registrar/registrar.component";
 import { RegistrarCategoriaComponent } from "../../categories/registrar/registrar.component";
 import { RegistrarSubcategoriaComponent } from "../../subcategories/registrar/registrar.component";
+import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
 import { PermisosComponent } from "../../permisos/permisos.component";
 import { MenusComponent } from "../../menus/menus.component";
 
@@ -23,8 +24,11 @@ export const AdminLayoutRoutes: Routes = [
     path: "subcategories/registrar",
     component: RegistrarSubcategoriaComponent,
   },
-  { path: "subcategories", component: SubcategoriesComponent },
   { path: "products", component: ProductsComponent },
+  {
+    path: "products/registrar",
+    component: RegistrarProductsComponent,
+  },
   { path: "permisos", component: PermisosComponent },
   { path: "menus", component: MenusComponent },
   { path: "menus/registrar", component: MenusComponent },

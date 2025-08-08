@@ -9,6 +9,7 @@ import { UsersComponent } from "../../users/users.component";
 import { RegistrarComponent } from "../../users/registrar/registrar.component";
 import { RegistrarCategoriaComponent } from "../../categories/registrar/registrar.component";
 import { RegistrarSubcategoriaComponent } from "../../subcategories/registrar/registrar.component";
+import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
 import { PermisosComponent } from "../../permisos/permisos.component";
 import { TypographyComponent } from "../../typography/typography.component";
 import { IconsComponent } from "../../icons/icons.component";
@@ -48,6 +49,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
     RegistrarComponent,
     RegistrarCategoriaComponent,
     RegistrarSubcategoriaComponent,
+    RegistrarProductsComponent,
     PermisosComponent,
     TypographyComponent,
     IconsComponent,

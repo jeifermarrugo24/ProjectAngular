@@ -1,6 +1,8 @@
 export interface Productos {
   producto_id?: number; // Opcional porque no se envía al guardar
   producto_nombre: string;
+  producto_categoria: number;
+  producto_subcaegoria?: number; // Opcional según la DB
 }
 
 export interface GuardarProductsResponse {
