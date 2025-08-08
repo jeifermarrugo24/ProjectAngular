@@ -1,0 +1,236 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 col-md-7">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">{{ getFormTitle() }}</h4>
+                        <p class="card-category">{{ getFormSubtitle() }}</p>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
+                            <!-- Información básica del menú -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Nombre del Menú</mat-label>
+                                        <input matInput formControlName="menu_nombre"
+                                            placeholder="Ej: Dashboard, Usuarios, Reportes">
+                                        <mat-error *ngIf="isFieldInvalid('menu_nombre')">
+                                            {{ getFieldError('menu_nombre') }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Tipo de Menú</mat-label>
+                                        <mat-select formControlName="menu_tipo">
+                                            <mat-option *ngFor="let tipo of tiposMenu" [value]="tipo.value">
+                                                {{ tipo.label }}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error *ngIf="isFieldInvalid('menu_tipo')">
+                                            {{ getFieldError('menu_tipo') }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <!-- Menú padre (solo si es submenu) -->
+                            <div class="row" *ngIf="menuForm.get('menu_tipo')?.value === 'submenu'">
+                                <div class="col-md-6">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Menú Padre</mat-label>
+                                        <mat-select formControlName="menu_id_padre">
+                                            <mat-option value="">-- Seleccione menú padre --</mat-option>
+                                            <mat-option *ngFor="let menuParent of menusParent"
+                                                [value]="menuParent.menu_id">
+                                                {{ menuParent.menu_nombre }}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error *ngIf="isFieldInvalid('menu_id_padre')">
+                                            {{ getFieldError('menu_id_padre') }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <!-- Ruta y configuración -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Ruta/URL</mat-label>
+                                        <input matInput formControlName="menu_path"
+                                            placeholder="Ej: /dashboard, /usuarios, /reportes">
+                                        <mat-error *ngIf="isFieldInvalid('menu_path')">
+                                            {{ getFieldError('menu_path') }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Icono</mat-label>
+                                        <input matInput formControlName="menu_icono"
+                                            placeholder="Ej: dashboard, person, assessment">
+                                        <mat-hint>Nombre del icono Material</mat-hint>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Orden</mat-label>
+                                        <input matInput type="number" formControlName="menu_orden" min="1"
+                                            placeholder="1">
+                                        <mat-error *ngIf="isFieldInvalid('menu_orden')">
+                                            {{ getFieldError('menu_orden') }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <mat-form-field class="form-control">
+                                        <mat-label>Descripción (Opcional)</mat-label>
+                                        <textarea matInput formControlName="menu_descripcion" rows="3"
+                                            placeholder="Describe la funcionalidad de este menú...">
+                    </textarea>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <button type="button" mat-raised-button class="btn btn-default"
+                                        (click)="isEditMode ? cancelEdit() : resetForm()" [disabled]="isSubmitting">
+                                        <mat-icon>{{ getResetButtonIcon() }}</mat-icon>
+                                        {{ getResetButtonText() }}
+                                    </button>
+                                    <button type="submit" mat-raised-button color="primary" class="btn btn-primary ml-2"
+                                        [disabled]="menuForm.invalid || isSubmitting">
+                                        <mat-icon *ngIf="!isSubmitting">save</mat-icon>
+                                        <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+                                        {{ getSubmitButtonText() }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de búsqueda y resultados -->
+            <div class="col-lg-4 col-md-5">
+                <div class="card">
+                    <div class="card-header card-header-info">
+                        <h4 class="card-title">Menús Registrados</h4>
+                        <p class="card-category">Buscar y gestionar menús existentes</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Búsqueda -->
+                        <div class="search-container mb-3">
+                            <mat-form-field class="form-control w-100">
+                                <mat-label>Buscar menús...</mat-label>
+                                <input matInput [(ngModel)]="searchTerm" (input)="onSearch($event)"
+                                    placeholder="Nombre, tipo o descripción">
+                                <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear"
+                                    (click)="clearSearch()">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                                <mat-icon matSuffix *ngIf="!searchTerm">search</mat-icon>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Resultados de búsqueda -->
+                        <div class="search-results" style="max-height: 500px; overflow-y: auto;">
+                            <div *ngFor="let menu of searchResults; trackBy: trackByMenuId; let i = index"
+                                class="search-result-item mb-2">
+                                <div class="card card-nav-tabs card-plain">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-8">
+                                                <h6 class="card-title mb-1">
+                                                    <mat-icon *ngIf="menu.menu_icono" class="mr-1">{{ menu.menu_icono
+                                                        }}</mat-icon>
+                                                    {{ menu.menu_nombre }}
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <span class="badge badge-info">{{ menu.menu_tipo_nombre }}</span>
+                                                    <span *ngIf="menu.menu_id_padre"
+                                                        class="badge badge-secondary ml-1">Submenú</span>
+                                                </small>
+                                                <p class="card-text mb-1 small" *ngIf="menu.menu_descripcion">
+                                                    {{ menu.menu_descripcion }}
+                                                </p>
+                                                <small class="text-muted" *ngIf="menu.menu_path">
+                                                    <mat-icon class="small-icon">link</mat-icon>
+                                                    {{ menu.menu_path }}
+                                                </small>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                                <div class="btn-group-vertical">
+                                                    <button mat-mini-fab color="primary" class="mb-1"
+                                                        (click)="editMenu(menu)" [disabled]="isSubmitting"
+                                                        matTooltip="Editar menú">
+                                                        <mat-icon>edit</mat-icon>
+                                                    </button>
+                                                    <button mat-mini-fab color="warn"
+                                                        (click)="deleteMenu(menu.menu_id!)" [disabled]="isSubmitting"
+                                                        matTooltip="Eliminar menú">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mensaje cuando no hay resultados -->
+                            <div *ngIf="searchResults.length === 0" class="text-center py-4">
+                                <mat-icon class="large-icon text-muted">search_off</mat-icon>
+                                <p class="text-muted mt-2">
+                                    {{ searchTerm ? 'No se encontraron menús que coincidan con la búsqueda' : 'No hay
+                                    menús registrados' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información adicional sobre tipos de menú -->
+<div class="container-fluid mt-3" *ngIf="!isMobileMenu()">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header card-header-success">
+                    <h5 class="card-title">
+                        <mat-icon>help_outline</mat-icon>
+                        Guía de Tipos de Menú
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2" *ngFor="let tipo of tiposMenu">
+                            <div class="info-box">
+                                <h6>{{ tipo.label }}</h6>
+                                <small class="text-muted">
+                                    <span *ngIf="tipo.value === 'principal'">Menú principal del sistema</span>
+                                    <span *ngIf="tipo.value === 'submenu'">Elemento hijo de un menú principal</span>
+                                    <span *ngIf="tipo.value === 'funcional'">Función o acción específica</span>
+                                    <span *ngIf="tipo.value === 'configuracion'">Opciones de configuración</span>
+                                    <span *ngIf="tipo.value === 'reporte'">Generación de reportes</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

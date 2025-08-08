@@ -11,6 +11,7 @@ import { RegistrarSubcategoriaComponent } from "../../subcategories/registrar/re
 import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
 import { PermisosComponent } from "../../permisos/permisos.component";
 import { MenusComponent } from "../../menus/menus.component";
+import { RegistrarMenuComponent } from "../../menus/registrar/registrar.component";
 import { UserProfileComponent } from "../../user-profile/user-profile.component";
 
 export const AdminLayoutRoutes: Routes = [
@@ -33,5 +34,5 @@ export const AdminLayoutRoutes: Routes = [
   },
   { path: "permisos", component: PermisosComponent },
   { path: "menus", component: MenusComponent },
-  { path: "menus/registrar", component: MenusComponent },
+  { path: "menus/registrar", component: RegistrarMenuComponent },
 ];

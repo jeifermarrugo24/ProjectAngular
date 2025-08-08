@@ -29,6 +29,7 @@ import { CategoriesComponent } from "../../categories/categories.component";
 import { SubcategoriesComponent } from "../../subcategories/subcategories.component";
 import { ProductsComponent } from "../../products/products.component";
 import { MenusComponent } from "../../menus/menus.component";
+import { RegistrarMenuComponent } from "../../menus/registrar/registrar.component";
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { MenusComponent } from "../../menus/menus.component";
     ProductsComponent,
     RegistrarProductsComponent,
     MenusComponent,
+    RegistrarMenuComponent,
     PermisosComponent,
     TypographyComponent,
     IconsComponent,
