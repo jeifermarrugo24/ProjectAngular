@@ -1,0 +1,67 @@
+.example-full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.password-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-error {
+  color: #f44336;
+  font-size: 12px;
+}
+
+.text-success {
+  color: #4caf50 !important;
+}
+
+.text-danger {
+  color: #f44336 !important;
+}
+
+.card-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-primary {
+  background-color: #9c27b0;
+  border-color: #9c27b0;
+}
+
+.btn-primary:hover {
+  background-color: #8e24aa;
+  border-color: #8e24aa;
+}
+
+.btn-default {
+  background-color: #999;
+  border-color: #999;
+  color: white;
+}
+
+.btn-default:hover {
+  background-color: #777;
+  border-color: #777;
+  color: white;
+}
+
+.pull-right {
+  float: right;
+}
+
+@media (max-width: 768px) {
+  .pull-right {
+    float: none;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

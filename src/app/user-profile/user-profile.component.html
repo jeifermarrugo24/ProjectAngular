@@ -3,87 +3,142 @@
     <div class="row">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header card-header-danger">
-            <h4 class="card-title">Edit Profile</h4>
-            <p class="card-category">Complete your profile</p>
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Editar Perfil</h4>
+            <p class="card-category">Actualiza tu información personal</p>
           </div>
           <div class="card-body">
-            <form>
-              <div class="row">
-                <div class="col-md-5">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Company (disabled)" disabled>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Username">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Email address" type="email">
-                  </div>
-                </div>
-              </div>
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+              <!-- Información Personal -->
               <div class="row">
                 <div class="col-md-6">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Fist Name" type="text">
-                  </div>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Nombres</mat-label>
+                    <input matInput 
+                           type="text"
+                           formControlName="usuario_nombres"
+                           placeholder="Ingrese sus nombres">
+                    <mat-error *ngIf="isFieldInvalid('usuario_nombres')">
+                      {{ getFieldError('usuario_nombres') }}
+                    </mat-error>
+                  </mat-form-field>
                 </div>
                 <div class="col-md-6">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Last Name" type="text">
-                  </div>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Apellidos</mat-label>
+                    <input matInput 
+                           type="text"
+                           formControlName="usuario_apellidos"
+                           placeholder="Ingrese sus apellidos">
+                    <mat-error *ngIf="isFieldInvalid('usuario_apellidos')">
+                      {{ getFieldError('usuario_apellidos') }}
+                    </mat-error>
+                  </mat-form-field>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Adress" type="text">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="example-full-width">
-                    <input matInput placeholder="City" type="text">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Country" type="text">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="example-full-width">
-                    <input matInput placeholder="Postal Code" type="text">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <label>About Me</label>
-                  <div class="example-full-width">
-                    <textarea matInput
-                      placeholder="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."></textarea>
-                  </div>
-                  <!-- <div class="form-group">
 
-                                      <div class="form-group">
-                                          <label class="bmd-label-floating"> Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.</label>
-                                          <textarea class="form-control" rows="5"></textarea>
-                                      </div>
-                                  </div> -->
+              <div class="row">
+                <div class="col-md-12">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput 
+                           type="email"
+                           formControlName="usuario_email"
+                           placeholder="correo@ejemplo.com">
+                    <mat-error *ngIf="isFieldInvalid('usuario_email')">
+                      {{ getFieldError('usuario_email') }}
+                    </mat-error>
+                  </mat-form-field>
                 </div>
               </div>
-              <button mat-raised-button type="submit" class="btn btn-danger pull-right">Update Profile</button>
+
+              <!-- Sección de Contraseña -->
+              <div class="row">
+                <div class="col-md-12">
+                  <mat-checkbox 
+                    [(ngModel)]="showPasswordFields" 
+                    [ngModelOptions]="{standalone: true}"
+                    (change)="togglePasswordFields()">
+                    Cambiar contraseña
+                  </mat-checkbox>
+                </div>
+              </div>
+
+              <div *ngIf="showPasswordFields" class="password-section">
+                <div class="row">
+                  <div class="col-md-12">
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Contraseña actual</mat-label>
+                      <input matInput 
+                             type="password"
+                             formControlName="current_password"
+                             placeholder="Ingrese su contraseña actual">
+                      <mat-error *ngIf="isFieldInvalid('current_password')">
+                        {{ getFieldError('current_password') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Nueva contraseña</mat-label>
+                      <input matInput 
+                             type="password"
+                             formControlName="new_password"
+                             placeholder="Ingrese la nueva contraseña">
+                      <mat-error *ngIf="isFieldInvalid('new_password')">
+                        {{ getFieldError('new_password') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-6">
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Confirmar contraseña</mat-label>
+                      <input matInput 
+                             type="password"
+                             formControlName="confirm_password"
+                             placeholder="Confirme la nueva contraseña">
+                      <mat-error *ngIf="isFieldInvalid('confirm_password')">
+                        {{ getFieldError('confirm_password') }}
+                      </mat-error>
+                      <mat-error *ngIf="!validatePasswords() && profileForm.get('confirm_password')?.touched">
+                        Las contraseñas no coinciden
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="row">
+                <div class="col-md-12">
+                  <button mat-raised-button 
+                          type="submit" 
+                          class="btn btn-primary pull-right"
+                          [disabled]="isSubmitting || profileForm.invalid || !validatePasswords()">
+                    <mat-icon *ngIf="isSubmitting">hourglass_empty</mat-icon>
+                    {{ isSubmitting ? 'Actualizando...' : 'Actualizar Perfil' }}
+                  </button>
+                  
+                  <button mat-raised-button 
+                          type="button" 
+                          class="btn btn-default pull-right"
+                          style="margin-right: 10px;"
+                          (click)="cancelEdit()"
+                          [disabled]="isSubmitting">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+              
               <div class="clearfix"></div>
             </form>
           </div>
         </div>
       </div>
+      
       <div class="col-md-4">
         <div class="card card-profile">
           <div class="card-avatar">
@@ -92,13 +147,21 @@
             </a>
           </div>
           <div class="card-body">
-            <h6 class="card-category text-gray">CEO / Co-Founder</h6>
-            <h4 class="card-title">Alec Thompson</h4>
-            <p class="card-description">
-              Don't be scared of the truth because we need to restart the human foundation in truth And I love you like
-              Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+            <h6 class="card-category text-gray">Usuario del Sistema</h6>
+            <h4 class="card-title" *ngIf="currentUser">
+              {{ currentUser.usuario_nombres }} {{ currentUser.usuario_apellidos }}
+            </h4>
+            <p class="card-description" *ngIf="currentUser">
+              Email: {{ currentUser.usuario_email }}<br>
+              Estado: <span [class]="currentUser.usuario_estado === 'A' ? 'text-success' : 'text-danger'">
+                {{ currentUser.usuario_estado === 'A' ? 'Activo' : 'Inactivo' }}
+              </span>
             </p>
-            <a href="javascript:void(0)" class="btn btn-danger btn-round">Follow</a>
+            <div class="card-footer">
+              <p class="text-muted">
+                <small>Mantén tu información actualizada para una mejor experiencia en el sistema.</small>
+              </p>
+            </div>
           </div>
         </div>
       </div>

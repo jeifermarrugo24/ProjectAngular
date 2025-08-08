@@ -21,11 +21,33 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = environment.token || "";
+    // Obtener el token del localStorage si existe
+    const userData = localStorage.getItem("currentUser");
+    let token = environment.token || "";
+
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.token) {
+          token = user.token;
+        }
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+      }
+    }
+
     return new HttpHeaders({
-      Authorization: `${token}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     });
+  }
+
+  getCurrentUserProfile(): Observable<ApiResponseModel<User>> {
+    return this.http.post<ApiResponseModel<User>>(
+      `${this.apiUrl}/services_user.php?accion=consultarPerfil`,
+      {}, // El backend extraerá el usuario_id del token
+      { headers: this.getHeaders() }
+    );
   }
 
   saveUser(user: User): Observable<ApiResponseModel<any>> {

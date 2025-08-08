@@ -11,10 +11,12 @@ import { RegistrarSubcategoriaComponent } from "../../subcategories/registrar/re
 import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
 import { PermisosComponent } from "../../permisos/permisos.component";
 import { MenusComponent } from "../../menus/menus.component";
+import { UserProfileComponent } from "../../user-profile/user-profile.component";
 
 export const AdminLayoutRoutes: Routes = [
   { path: "", redirectTo: "dashboard", pathMatch: "full" },
   { path: "dashboard", component: DashboardComponent },
+  { path: "user-profile", component: UserProfileComponent },
   { path: "users", component: UsersComponent },
   { path: "users/registrar", component: UserRegistrarComponent },
   { path: "categories", component: CategoriesComponent },
