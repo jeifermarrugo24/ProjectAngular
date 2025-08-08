@@ -12,6 +12,7 @@ import { ConfigUserComponent } from "./config-user/config-user.component";
 import { CategoriesComponent } from "./categories/categories.component";
 import { ProductsComponent } from "./products/products.component";
 import { SubcategoriesComponent } from './subcategories/subcategories.component';
+import { MenusComponent } from './menus/menus.component';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import { SubcategoriesComponent } from './subcategories/subcategories.component'
     CategoriesComponent,
     ProductsComponent,
     SubcategoriesComponent,
+    MenusComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

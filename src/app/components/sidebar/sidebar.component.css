@@ -1,0 +1,104 @@
+/* Estilos para menú multinivel - Simplificado */
+.nav-item .nav-link {
+  transition: all 0.3s ease;
+}
+
+.nav-item .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Estilos específicos para menús padre con hijos */
+.nav-link a[routerLink] {
+  transition: all 0.3s ease;
+}
+
+.nav-link a[routerLink]:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Estilo para el área de toggle (flecha) */
+.nav-link div[style*="cursor: pointer"]:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Estilos para submenús */
+.nav-submenu {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin: 5px 0;
+  padding: 5px 0;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+/* Hover effect para submenús - texto negro */
+.nav-submenu .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: black !important;
+  transform: translateX(5px);
+}
+
+.nav-submenu .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: black !important;
+  font-weight: 500;
+}
+
+/* Asegurar que los submenús tengan texto negro */
+.nav-submenu .nav-link,
+.nav-submenu .nav-link p,
+.nav-submenu .nav-link .material-icons {
+  color: black !important;
+}
+
+/* Iconos en submenús */
+.nav-submenu .material-icons {
+  margin-right: 10px;
+  font-size: 16px !important;
+  vertical-align: middle;
+}
+
+/* Animación de la flecha */
+.material-icons {
+  transition: transform 0.3s ease;
+}
+
+/* Separación visual clara entre navegación y toggle */
+.nav-link[style*="justify-content: space-between"] {
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-link[style*="justify-content: space-between"]:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-submenu {
+    padding-left: 20px;
+  }
+  
+  .nav-submenu .nav-link {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  /* Hacer el área de toggle más grande en móviles */
+  .nav-link div[style*="cursor: pointer"] {
+    padding: 15px !important;
+  }
+}

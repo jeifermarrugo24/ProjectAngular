@@ -9,6 +9,6 @@
  */
 export const environment = {
   production: false,
-  apiUrl: "https://ld7kxwkx-80.use.devtunnels.ms/skinatech/api",
+  apiUrl: "http://localhost/skinatech/api",
   token: "a-string-secret-at-least-256-bits-long",
 };

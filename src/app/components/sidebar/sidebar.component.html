@@ -1,72 +1,120 @@
 <div class="logo">
     <a href="https://www.creative-tim.com" class="simple-text">
         <div class="logo-img">
-            <img src="/assets/img/angular2-logo-red.png"/>
+            <img src="/assets/img/angular2-logo-red.png" />
         </div>
         PT Skinatech
     </a>
 </div>
 <div class="sidebar-wrapper">
-  <div *ngIf="isMobileMenu()">
-    <form class="navbar-form">
-      <span class="bmd-form-group">
-        <div class="input-group no-border">
-          <input type="text" value="" class="form-control" placeholder="Search...">
-          <button mat-raised-button type="submit" class="btn btn-white btn-round btn-just-icon">
-            <i class="material-icons">search</i>
-            <div class="ripple-container"></div>
-          </button>
-        </div>
-      </span>
-    </form>
-    <ul class="nav navbar-nav nav-mobile-menu">
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)">
-                <i class="material-icons">dashboard</i>
-                <p>
-                    <span class="d-lg-none d-md-block">Stats</span>
-                </p>
-            </a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="material-icons">notifications</i>
-                <span class="notification">5</span>
-                <p>
-                    <span class="d-lg-none d-md-block">Some Actions</span>
-                </p>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Mike John responded to your email</a>
-                <a class="dropdown-item" href="#">You have 5 new tasks</a>
-                <a class="dropdown-item" href="#">You're now friend with Andrew</a>
-                <a class="dropdown-item" href="#">Another Notification</a>
-                <a class="dropdown-item" href="#">Another One</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLinkUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="material-icons">person</i>
-                <p>
-                    <span class="d-lg-none d-md-block">Account</span>
-                </p>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLinkUser">
-                <a class="dropdown-item" href="#">Editar Perfil</a>
-                <a class="dropdown-item" href="#">Cerrar Sesion</a>
-            </div>
-        </li>
-    </ul>
-  </div>
+    <div *ngIf="isMobileMenu()">
+        <form class="navbar-form">
+            <span class="bmd-form-group">
+                <div class="input-group no-border">
+                    <input type="text" value="" class="form-control" placeholder="Search...">
+                    <button mat-raised-button type="submit" class="btn btn-white btn-round btn-just-icon">
+                        <i class="material-icons">search</i>
+                        <div class="ripple-container"></div>
+                    </button>
+                </div>
+            </span>
+        </form>
+        <ul class="nav navbar-nav nav-mobile-menu">
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)">
+                    <i class="material-icons">dashboard</i>
+                    <p>
+                        <span class="d-lg-none d-md-block">Stats</span>
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">notifications</i>
+                    <span class="notification">5</span>
+                    <p>
+                        <span class="d-lg-none d-md-block">Some Actions</span>
+                    </p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">Mike John responded to your email</a>
+                    <a class="dropdown-item" href="#">You have 5 new tasks</a>
+                    <a class="dropdown-item" href="#">You're now friend with Andrew</a>
+                    <a class="dropdown-item" href="#">Another Notification</a>
+                    <a class="dropdown-item" href="#">Another One</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLinkUser" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">person</i>
+                    <p>
+                        <span class="d-lg-none d-md-block">Account</span>
+                    </p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLinkUser">
+                    <a class="dropdown-item" href="#">Editar Perfil</a>
+                    <a class="dropdown-item" href="#">Cerrar Sesion</a>
+                </div>
+            </li>
+        </ul>
+    </div>
     <ul class="nav">
         <ng-container *ngFor="let group of menuItems; let lastGroup = last">
-            <h5 class="text-uppercase px-3 py-2" style="color: black;">{{ group.type }}</h5>
-            <li *ngFor="let menuItem of group" routerLinkActive="active" class="{{menuItem.class}} nav-item">
-            <a class="nav-link" [routerLink]="[menuItem.path]">
-                <i class="material-icons">{{menuItem.icon}}</i>
-                <p>{{menuItem.title}}</p>
-            </a>
+            <!-- Encabezado del grupo por tipo -->
+            <h5 class="text-uppercase px-3 py-2" style="color: black;">{{ group[0]?.type || 'GENERAL' }}</h5>
+
+            <!-- Iterar sobre cada elemento del grupo -->
+            <li *ngFor="let menuItem of group" class="{{menuItem.class}} nav-item">
+
+                <!-- Menú SIN hijos (menú simple) -->
+                <ng-container *ngIf="!menuItem.children || menuItem.children.length === 0">
+                    <a class="nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active">
+                        <i class="material-icons">{{menuItem.icon}}</i>
+                        <p>{{menuItem.title}}</p>
+                    </a>
+                </ng-container>
+
+                <!-- Menú CON hijos (menú multinivel) -->
+                <ng-container *ngIf="menuItem.children && menuItem.children.length > 0">
+                    <!-- Menú padre con navegación y toggle separados -->
+                    <div class="nav-link"
+                        style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
+                        <!-- Parte navegable (texto e icono) -->
+                        <a [routerLink]="[menuItem.path]" routerLinkActive="active"
+                            style="flex: 1; display: flex; align-items: center; padding: 10px 16px; text-decoration: none; color: inherit;">
+                            <i class="material-icons">{{menuItem.icon}}</i>
+                            <p style="margin: 0; margin-left: 15px;">{{menuItem.title}}</p>
+                        </a>
+
+                        <!-- Flecha para toggle (solo expande/colapsa) -->
+                        <div style="padding: 10px; cursor: pointer; display: flex; align-items: center;"
+                            (click)="toggleMenuExpanded(menuItem.menu_id)">
+                            <i class="material-icons" style="font-size: 18px; transition: transform 0.3s ease;"
+                                [style.transform]="expandedMenus.has(menuItem.menu_id) ? 'rotate(180deg)' : 'rotate(0deg)'">
+                                expand_more
+                            </i>
+                        </div>
+                    </div>
+
+                    <!-- Submenús (hijos) - Solo se muestran si está expandido -->
+                    <div *ngIf="expandedMenus.has(menuItem.menu_id)"
+                        style="background-color: rgba(255, 255, 255, 0.05); border-radius: 4px; margin: 5px 0; padding: 5px 0;">
+                        <div *ngFor="let child of menuItem.children" class="nav-item" style="padding-left: 30px;">
+                            <a class="nav-link" [routerLink]="[child.path]" routerLinkActive="active"
+                                style="padding: 8px 15px; color: black; display: flex; align-items: center;">
+                                <i class="material-icons"
+                                    style="font-size: 16px; margin-right: 10px; color: black;">{{child.icon}}</i>
+                                <p style="margin: 0; font-size: 14px; color: black;">{{child.title}}</p>
+                            </a>
+                        </div>
+                    </div>
+                </ng-container>
+
             </li>
+
+            <!-- Separador entre grupos -->
             <hr *ngIf="!lastGroup" class="my-2" />
         </ng-container>
     </ul>

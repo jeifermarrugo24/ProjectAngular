@@ -10,6 +10,7 @@ import { RegistrarComponent } from "../../users/registrar/registrar.component";
 import { RegistrarCategoriesComponent } from "../../categories/registrar-categories/registrar-categories.component";
 import { RegistrarProductsComponent } from "../../products/registrar-products/registrar-products.component";
 import { RegistrarSubcategoriesComponent } from "../../subcategories/registrar-subcategories/registrar-subcategories.component";
+import { PermisosComponent } from "../../permisos/permisos.component";
 import { TypographyComponent } from "../../typography/typography.component";
 import { IconsComponent } from "../../icons/icons.component";
 import { MapsComponent } from "../../maps/maps.component";
@@ -22,6 +23,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 import { MatIconModule } from "@angular/material/icon";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   imports: [
@@ -36,6 +39,8 @@ import { MatIconModule } from "@angular/material/icon";
     MatSelectModule,
     MatTooltipModule,
     MatIconModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     DashboardComponent,
@@ -45,6 +50,7 @@ import { MatIconModule } from "@angular/material/icon";
     RegistrarCategoriesComponent,
     RegistrarProductsComponent,
     RegistrarSubcategoriesComponent,
+    PermisosComponent,
     TypographyComponent,
     IconsComponent,
     MapsComponent,

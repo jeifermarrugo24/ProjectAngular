@@ -49,6 +49,9 @@ switch ($accion) {
     case 'consultar':
         get_menus($data, $conn);
         break;
+    case 'consultarPorPerfil':
+        get_menus_by_profile($data, $conn);
+        break;
     case 'eliminar':
         delete_menus($data, $conn);
         break;
@@ -66,7 +69,6 @@ function save_menus($data, $conn)
     $menu_nombre = $data['menu_nombre'] ?? '';
     $menu_tipo = $data['menu_tipo'] ?? 'default';
     $menu_id_padre = isset($data['menu_id_padre']) ? intval($data['menu_id_padre']) : null;
-    $menu_path = $data['menu_path'] ?? '';
     if (!$menu_nombre) {
         http_response_code(400);
         echo json_encode(['error' => 'El campo menu nombre es obligatorio']);
@@ -74,11 +76,9 @@ function save_menus($data, $conn)
     }
 
     try {
-
-        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre, menu_tipo, menu_id_padre, menu_path) VALUES (:menu_nombre,:menu_tipo, :menu_id_padre, :menu_path)");
+        $stmt = $conn->prepare("INSERT INTO menus (menu_nombre, menu_tipo, menu_id_padre) VALUES (:menu_nombre,:menu_tipo, :menu_id_padre)");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
         $stmt->bindParam(':menu_tipo', $menu_tipo);
-        $stmt->bindParam(':menu_path', $menu_path);
         if ($menu_id_padre !== null) {
             $stmt->bindParam(':menu_id_padre', $menu_id_padre);
         } else {
@@ -116,11 +116,6 @@ function get_menus($data, $conn)
     if (!empty($data['menu_id'])) {
         $conditions .= " AND menu_id = :menu_id";
         $params[':menu_id'] = intval($data['menu_id']);
-    }
-
-    if (isset($data['menu_path']) && $data['menu_path'] !== '') {
-        $conditions .= " AND menu_path = :menu_path";
-        $params[':menu_path'] = $data['menu_path'];
     }
 
     try {
@@ -174,7 +169,6 @@ function update_menus($data, $conn)
     $menu_nombre = $data['menu_nombre'] ?? '';
     $menu_tipo = $data['menu_tipo'] ?? 'default';
     $menu_id_padre = isset($data['menu_id_padre']) ? intval($data['menu_id_padre']) : null;
-    $menu_path = $data['menu_path'] ?? '';
 
     if ($menu_id <= 0) {
         http_response_code(400);
@@ -183,7 +177,7 @@ function update_menus($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre, menu_tipo = :menu_tipo, menu_id_padre = :menu_id_padre, menu_path = :menu_path WHERE menu_id = :menu_id");
+        $stmt = $conn->prepare("UPDATE menus SET menu_nombre = :menu_nombre, menu_tipo = :menu_tipo, menu_id_padre = :menu_id_padre WHERE menu_id = :menu_id");
         $stmt->bindParam(':menu_nombre', $menu_nombre);
         $stmt->bindParam(':menu_tipo', $menu_tipo);
         $stmt->bindParam(':menu_id', $menu_id);
@@ -213,4 +207,127 @@ function validar_token($jwt, $clave)
     $valida_b64 = rtrim(strtr(base64_encode($valida), '+/', '-_'), '=');
 
     return hash_equals($firma, $valida_b64);
+}
+
+function get_menus_by_profile($data, $conn)
+{
+    error_log("=== CONSULTANDO MENÚS POR PERFIL ===");
+
+    $perfil_id = intval($data['perfil_id'] ?? 0);
+
+    if ($perfil_id <= 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID de perfil es requerido']);
+        return;
+    }
+
+    try {
+        error_log("Perfil ID recibido: " . $perfil_id);
+
+        // Primero verificar qué columnas existen en la tabla menus
+        $describeStmt = $conn->prepare("DESCRIBE menus");
+        $describeStmt->execute();
+        $columns = $describeStmt->fetchAll(PDO::FETCH_COLUMN);
+        error_log("Columnas disponibles en tabla menus: " . implode(', ', $columns));
+
+        // Consulta básica con solo las columnas que sabemos que existen
+        $sql = "SELECT DISTINCT 
+                    m.menu_id,
+                    m.menu_nombre,
+                    m.menu_tipo,
+                    m.menu_id_padre";
+
+        // Agregar columnas opcionales solo si existen
+        if (in_array('menu_path', $columns)) {
+            $sql .= ",\n                    m.menu_path";
+        }
+        if (in_array('menu_orden', $columns)) {
+            $sql .= ",\n                    m.menu_orden";
+        }
+        if (in_array('menu_estado', $columns)) {
+            $sql .= ",\n                    m.menu_estado";
+        }
+
+        $sql .= "\n                FROM menus m
+                INNER JOIN permisos p ON p.permiso_menu = m.menu_id
+                WHERE p.permiso_perfil = :perfil_id";
+
+        // Solo agregar filtro de estado si la columna existe
+        if (in_array('menu_estado', $columns)) {
+            $sql .= "\n                AND m.menu_estado = 'Activo'";
+        }
+
+        // Ordenar por columna de orden si existe, sino por nombre
+        if (in_array('menu_orden', $columns)) {
+            $sql .= "\n                ORDER BY m.menu_orden ASC, m.menu_nombre ASC";
+        } else {
+            $sql .= "\n                ORDER BY m.menu_nombre ASC";
+        }
+
+        error_log("SQL generado: " . $sql);
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':perfil_id', $perfil_id);
+        $stmt->execute();
+
+        $menus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        error_log("Menús encontrados: " . count($menus));
+        error_log("Perfil consultado: " . $perfil_id);
+
+        if (empty($menus)) {
+            error_log("No se encontraron menús para el perfil: " . $perfil_id);
+
+            // Verificar si existen permisos para este perfil
+            $checkSql = "SELECT COUNT(*) as total FROM permisos WHERE permiso_perfil = :perfil_id";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bindParam(':perfil_id', $perfil_id);
+            $checkStmt->execute();
+            $permisos = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+            error_log("Permisos totales para el perfil " . $perfil_id . ": " . $permisos['total']);
+
+            http_response_code(200);
+            echo json_encode([
+                'success' => true,
+                'data' => [],
+                'message' => 'No se encontraron menús para este perfil',
+                'debug' => [
+                    'perfil_id' => $perfil_id,
+                    'permisos_count' => $permisos['total'],
+                    'columns_available' => $columns,
+                    'sql' => $sql
+                ]
+            ]);
+            return;
+        }
+
+        // Log detallado de cada menú encontrado
+        foreach ($menus as $index => $menu) {
+            error_log("Menú " . ($index + 1) . ": " . $menu['menu_nombre'] . " (ID: " . $menu['menu_id'] . ")");
+        }
+
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'data' => $menus,
+            'message' => 'Menús consultados correctamente',
+            'debug' => [
+                'perfil_id' => $perfil_id,
+                'menus_count' => count($menus),
+                'columns_available' => $columns
+            ]
+        ]);
+    } catch (PDOException $e) {
+        error_log("Error en get_menus_by_profile: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'error' => 'Error al consultar menús por perfil',
+            'detalle' => $e->getMessage(),
+            'debug' => [
+                'perfil_id' => $perfil_id,
+                'sql' => $sql ?? 'No SQL disponible'
+            ]
+        ]);
+    }
 }

@@ -1,0 +1,198 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">Gestión de Permisos por Rol</h4>
+                        <p class="card-category">Configure los permisos de acceso a menús para cada perfil de usuario
+                        </p>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Formulario de selección de perfil -->
+                        <form [formGroup]="permisosForm" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <mat-form-field class="full-width">
+                                        <mat-label>Seleccionar Perfil/Rol</mat-label>
+                                        <mat-select formControlName="perfil" required>
+                                            <mat-option *ngFor="let perfil of perfiles" [value]="perfil.value">
+                                                {{perfil.label}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error *ngIf="permisosForm.get('perfil')?.hasError('required')">
+                                            Debe seleccionar un perfil
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-6" *ngIf="selectedPerfil">
+                                    <div class="alert alert-info">
+                                        <strong>Perfil seleccionado:</strong> {{getPerfilNombre(selectedPerfil)}}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Botones de acción -->
+                        <div class="row mb-3" *ngIf="selectedPerfil">
+                            <div class="col-md-12">
+                                <button mat-raised-button color="primary" (click)="saveAllPermissions()"
+                                    [disabled]="isSaving">
+                                    <mat-icon>save</mat-icon>
+                                    {{isSaving ? 'Guardando...' : 'Guardar Permisos'}}
+                                </button>
+                                <button mat-raised-button color="warn" (click)="resetPermissions()"
+                                    [disabled]="isSaving" class="ml-2">
+                                    <mat-icon>clear_all</mat-icon>
+                                    Quitar Todos los Permisos
+                                </button>
+                                <button mat-raised-button (click)="loadMenuTreeWithPermissions(selectedPerfil)"
+                                    [disabled]="isLoading" class="ml-2">
+                                    <mat-icon>refresh</mat-icon>
+                                    Recargar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Loading -->
+                        <div *ngIf="isLoading" class="text-center py-4">
+                            <mat-spinner diameter="50"></mat-spinner>
+                            <p class="mt-2">Cargando menús...</p>
+                        </div>
+
+                        <!-- Árbol de menús con permisos -->
+                        <div *ngIf="!isLoading && menuTree.length > 0" class="menu-tree">
+                            <h5 class="mb-3">
+                                <mat-icon>account_tree</mat-icon>
+                                Estructura de Menús y Permisos
+                            </h5>
+
+                            <div class="tree-container">
+                                <ng-container *ngFor="let node of menuTree">
+                                    <div class="tree-node"
+                                        [class.has-children]="node.children && node.children.length > 0">
+
+                                        <!-- Nodo principal -->
+                                        <div class="node-content"
+                                            [class.parent-node]="node.children && node.children.length > 0">
+
+                                            <!-- Botón de expansión -->
+                                            <button *ngIf="node.children && node.children.length > 0" mat-icon-button
+                                                (click)="toggleNodeExpansion(node)" class="expand-button">
+                                                <mat-icon>{{node.isExpanded ? 'expand_less' : 'expand_more'}}</mat-icon>
+                                            </button>
+
+                                            <!-- Checkbox de permiso -->
+                                            <mat-checkbox [checked]="node.hasPermission"
+                                                (change)="toggleMenuPermission(node)" [disabled]="!selectedPerfil"
+                                                class="permission-checkbox">
+                                            </mat-checkbox>
+
+                                            <!-- Información del menú -->
+                                            <div class="menu-info">
+                                                <div class="menu-header">
+                                                    <mat-icon *ngIf="node.menu_icono"
+                                                        class="menu-icon">{{node.menu_icono}}</mat-icon>
+                                                    <mat-icon *ngIf="!node.menu_icono" class="menu-icon">menu</mat-icon>
+                                                    <span class="menu-name">{{node.menu_nombre}}</span>
+                                                    <span class="menu-badge"
+                                                        *ngIf="node.children && node.children.length > 0">
+                                                        {{node.children.length}} submenú(s)
+                                                    </span>
+                                                </div>
+                                                <div class="menu-details"
+                                                    *ngIf="node.menu_descripcion || node.menu_url">
+                                                    <small class="text-muted">
+                                                        <span
+                                                            *ngIf="node.menu_descripcion">{{node.menu_descripcion}}</span>
+                                                        <span *ngIf="node.menu_url" class="ml-2">
+                                                            <mat-icon class="small-icon">link</mat-icon>
+                                                            {{node.menu_url}}
+                                                        </span>
+                                                    </small>
+                                                </div>
+                                            </div>
+
+                                            <!-- Indicador de estado -->
+                                            <div class="permission-status">
+                                                <mat-icon [class.granted]="node.hasPermission"
+                                                    [class.denied]="!node.hasPermission">
+                                                    {{node.hasPermission ? 'check_circle' : 'cancel'}}
+                                                </mat-icon>
+                                            </div>
+                                        </div>
+
+                                        <!-- Nodos hijos -->
+                                        <div *ngIf="node.children && node.children.length > 0 && node.isExpanded"
+                                            class="children-container">
+                                            <ng-container *ngFor="let child of node.children">
+                                                <div class="child-node">
+
+                                                    <div class="node-content">
+                                                        <!-- Checkbox de permiso para hijo -->
+                                                        <mat-checkbox [checked]="child.hasPermission"
+                                                            (change)="toggleMenuPermission(child)"
+                                                            [disabled]="!selectedPerfil"
+                                                            class="permission-checkbox child-checkbox">
+                                                        </mat-checkbox>
+
+                                                        <!-- Información del submenú -->
+                                                        <div class="menu-info">
+                                                            <div class="menu-header">
+                                                                <mat-icon *ngIf="child.menu_icono"
+                                                                    class="menu-icon">{{child.menu_icono}}</mat-icon>
+                                                                <mat-icon *ngIf="!child.menu_icono"
+                                                                    class="menu-icon">subdirectory_arrow_right</mat-icon>
+                                                                <span class="menu-name">{{child.menu_nombre}}</span>
+                                                            </div>
+                                                            <div class="menu-details"
+                                                                *ngIf="child.menu_descripcion || child.menu_url">
+                                                                <small class="text-muted">
+                                                                    <span
+                                                                        *ngIf="child.menu_descripcion">{{child.menu_descripcion}}</span>
+                                                                    <span *ngIf="child.menu_url" class="ml-2">
+                                                                        <mat-icon class="small-icon">link</mat-icon>
+                                                                        {{child.menu_url}}
+                                                                    </span>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Indicador de estado para hijo -->
+                                                        <div class="permission-status">
+                                                            <mat-icon [class.granted]="child.hasPermission"
+                                                                [class.denied]="!child.hasPermission">
+                                                                {{child.hasPermission ? 'check_circle' : 'cancel'}}
+                                                            </mat-icon>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <!-- Estado vacío -->
+                        <div *ngIf="!isLoading && menuTree.length === 0" class="text-center py-5">
+                            <mat-icon class="large-icon text-muted">menu</mat-icon>
+                            <h5 class="mt-2 text-muted">No hay menús disponibles</h5>
+                            <p class="text-muted">Cree algunos menús primero para poder asignar permisos</p>
+                        </div>
+
+                        <!-- Mensaje de ayuda -->
+                        <div *ngIf="!selectedPerfil" class="text-center py-5">
+                            <mat-icon class="large-icon text-muted">person</mat-icon>
+                            <h5 class="mt-2 text-muted">Seleccione un perfil</h5>
+                            <p class="text-muted">Elija un perfil de usuario para gestionar sus permisos de acceso a
+                                menús</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

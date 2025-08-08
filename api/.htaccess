@@ -14,6 +14,7 @@ RewriteRule ^consultarDatosUsuario$ services_user.php?accion=consultar [L,QSA]
 RewriteRule ^eliminarDatosUsuario$ services_user.php?accion=eliminar [L,QSA]
 RewriteRule ^editarDatosUsuario$ services_user.php?accion=editar [L,QSA]
 RewriteRule ^loginUser$ services_user.php?accion=login [L,QSA]
+RewriteRule ^consultarPerfilUsuario$ services_user.php?accion=consultarPerfil [L,QSA]
 
 # Reescritura de endpoints para categorías
 RewriteRule ^guardarDatosCategoria$ services_categories.php?accion=guardar [L,QSA]
@@ -36,6 +37,7 @@ RewriteRule ^editarDatosProducto$ services_products.php?accion=editar [L,QSA]
 # Reescritura de endpoints para permisos
 RewriteRule ^guardarDatosPermiso$ services_permissions.php?accion=guardar [L,QSA]
 RewriteRule ^consultarDatosPermiso$ services_permissions.php?accion=consultar [L,QSA]
+RewriteRule ^consultarMenusConPermisos$ services_permissions.php?accion=consultarMenusConPermisos [L,QSA]
 RewriteRule ^eliminarDatosPermiso$ services_permissions.php?accion=eliminar [L,QSA]
 RewriteRule ^editarDatosPermiso$ services_permissions.php?accion=editar [L,QSA]
 
@@ -48,5 +50,6 @@ RewriteRule ^editarDatosRol$ services_roles.php?accion=editar [L,QSA]
 # Reescritura de endpoints para menus
 RewriteRule ^guardarDatosMenu$ services_menus.php?accion=guardar [L,QSA]
 RewriteRule ^consultarDatosMenu$ services_menus.php?accion=consultar [L,QSA]
+RewriteRule ^consultarDatosMenuPorPerfil$ services_menus.php?accion=consultarPorPerfil [L,QSA]
 RewriteRule ^eliminarDatosMenu$ services_menus.php?accion=eliminar [L,QSA]
 RewriteRule ^editarDatosMenu$ services_menus.php?accion=editar [L,QSA]

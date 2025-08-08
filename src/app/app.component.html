@@ -1,74 +1,82 @@
-<router-outlet></router-outlet>
-<div class="header bg-gradient-danger py-7 mt-4 py-lg-8">
-  <div class="container">
-    <div class="header-body text-center mb-7">
-      <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-6">
-          <h1 class="text-danger">Bienvenido equipo SkinaTech!</h1>
-          <p class="text-lead text-black">Mi nombre es Jeifer Marrugo <br> Para iniciar sesion coloque <br> Correo: admin@admin.com  <br> Contraseña: administracion</p>
+<!-- VISTA CUANDO NO ESTÁ AUTENTICADO - MOSTRAR LOGIN -->
+<div *ngIf="!authService.isAuthenticated()">
+  <div class="header bg-gradient-danger py-7 mt-4 py-lg-8">
+    <div class="container">
+      <div class="header-body text-center mb-7">
+        <div class="row justify-content-center">
+          <div class="col-lg-5 col-md-6">
+            <h1 class="text-danger">Bienvenido equipo SkinaTech!</h1>
+            <p class="text-lead text-black">Mi nombre es Jeifer Marrugo <br> Para iniciar sesion coloque <br> Correo:
+              admin@admin.com <br> Contraseña: Administracion</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Page content -->
+  <div class="container mt--8 pb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <div class="card bg-white shadow border-0">
+          <div class="card-header bg-transparent">
+            <div class="text-muted text-center mb-2 mt-4">
+              <img
+                src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png"
+                alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
+            </div>
+            <hr>
+            <div class="text-muted text-center mt-2 text-danger">
+              <h2>INICIO DE SESION</h2>
+            </div>
+          </div>
+          <div class="card-body px-lg-5">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" role="form">
+              <div class="form-group mb-3">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="ni ni-single-02"></i></span>
+                  </div>
+                  <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_email')" placeholder="Email"
+                    type="email" formControlName="usuario_email">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_email')">
+                  {{getFieldError('usuario_email')}}
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group input-group-alternative">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                  </div>
+                  <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_password')"
+                    placeholder="Contraseña" type="password" formControlName="usuario_password">
+                </div>
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_password')">
+                  {{getFieldError('usuario_password')}}
+                </div>
+              </div>
+              <div class="custom-control custom-control-alternative custom-checkbox mt-4">
+                <input class="custom-control-input" id="customCheckLogin" type="checkbox" formControlName="rememberMe">
+                <label class="custom-control-label" for="customCheckLogin">
+                  <span class="text-muted">Remember me</span>
+                </label>
+              </div>
+              <div class="text-center">
+                <button type="submit" class="btn btn-danger my-4" [disabled]="loginForm.invalid || isSubmitting">
+                  <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm mr-2" role="status"
+                    aria-hidden="true"></span>
+                  {{isSubmitting ? 'Signing in...' : 'Sign in'}}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Page content -->
-<div class="container mt--8 pb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-5 col-md-7">
-      <div class="card bg-white shadow border-0">
-        <div class="card-header bg-transparent">
-          <div class="text-muted text-center mb-2 mt-4">
-            <img
-              src="https://www.skinatech.com/inicio/wp-content/uploads/2021/05/logo_skinatech_2021_skinatech_logo.png"
-              alt="SkinaTech Logo" class="img-fluid" style="max-width: 200px;">
-          </div>
-          <hr>
-          <div class="text-muted text-center mt-2 text-danger">
-            <h2>INICIO DE SESION</h2>
-          </div>
-        </div>
-        <div class="card-body px-lg-5">
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" role="form">
-            <div class="form-group mb-3">
-              <div class="input-group input-group-alternative">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-single-02"></i></span>
-                </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_email')" placeholder="Email"
-                  type="email" formControlName="usuario_email">
-              </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_email')">
-                {{getFieldError('usuario_email')}}
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="input-group input-group-alternative">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="ni ni-single-02"></i></span>
-                </div>
-                <input class="form-control" [class.is-invalid]="isFieldInvalid('usuario_password')"
-                  placeholder="Contraseña" type="password" formControlName="usuario_password">
-              </div>
-              <div class="invalid-feedback" *ngIf="isFieldInvalid('usuario_password')">
-                {{getFieldError('usuario_password')}}
-              </div>
-            </div>
-            <div class="custom-control custom-control-alternative custom-checkbox mt-4">
-              <input class="custom-control-input" id="customCheckLogin" type="checkbox" formControlName="rememberMe">
-              <label class="custom-control-label" for="customCheckLogin">
-                <span class="text-muted">Remember me</span>
-              </label>
-            </div>
-            <div class="text-center">
-              <button type="submit" class="btn btn-danger my-4" [disabled]="loginForm.invalid || isSubmitting">
-                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm mr-2" role="status"
-                  aria-hidden="true"></span>
-                {{isSubmitting ? 'Signing in...' : 'Sign in'}}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+
+<!-- VISTA CUANDO ESTÁ AUTENTICADO - MOSTRAR DASHBOARD/ADMIN -->
+<div *ngIf="authService.isAuthenticated()">
+  <router-outlet></router-outlet>
 </div>

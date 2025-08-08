@@ -14,16 +14,17 @@ export class AppComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    public authService: AuthService
   ) {
     this.createLoginForm();
   }
 
   ngOnInit(): void {
-    // // Verificar si ya está autenticado
-    // if (this.authService.isAuthenticated()) {
-    //   this.authService.redirectToDashboard();
-    // }
+    // Verificar si ya está autenticado
+    if (this.authService.isAuthenticated()) {
+      console.log("Usuario ya autenticado, redirigiendo al dashboard...");
+      this.authService.redirectToDashboard();
+    }
   }
 
   createLoginForm(): void {

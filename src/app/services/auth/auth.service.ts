@@ -20,8 +20,9 @@ export interface UserData {
   usuario_id: number;
   usuario_nombres: string;
   usuario_apellidos?: string;
-  usuario_perfil?: string;
+  usuario_perfil?: string | number; // Puede ser string o number
   usuario_estado?: string;
+  usuario_email?: string;
 }
 
 @Injectable({
@@ -146,5 +147,19 @@ export class AuthService {
   refreshToken(): Observable<LoginResponse> {
     // Implementar si el backend soporta refresh tokens
     throw new Error("Refresh token no implementado");
+  }
+
+  /**
+   * Consultar el perfil del usuario por su ID
+   */
+  getUserProfile(usuarioId: number): Observable<any> {
+    console.log("=== CONSULTANDO PERFIL DEL USUARIO ===");
+    console.log("Usuario ID:", usuarioId);
+
+    return this.http.post<any>(
+      `${this.apiUrl}/consultarPerfilUsuario`,
+      { usuario_id: usuarioId },
+      { headers: this.getHeaders() }
+    );
   }
 }
