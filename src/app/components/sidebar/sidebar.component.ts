@@ -550,6 +550,39 @@ export class SidebarComponent implements OnInit {
     console.log("Estado expandedMenus:", this.expandedMenus);
   }
 
+  /**
+   * Verificar si un path es válido y navegar o mostrar alerta
+   */
+  handleMenuClick(event: Event, menuItem: RouteInfo): void {
+    // Verificar si el path es válido
+    if (
+      !menuItem.path ||
+      menuItem.path === "#" ||
+      menuItem.path === "" ||
+      menuItem.path === "javascript:void(0)"
+    ) {
+      // Prevenir la navegación
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Mostrar alerta de que está en desarrollo
+      alert(
+        `🚧 La opción "${menuItem.title}" está en desarrollo.\n\nEsta funcionalidad estará disponible próximamente.`
+      );
+      return;
+    }
+
+    // Si el path es válido, permite la navegación normal
+    return;
+  }
+
+  /**
+   * Verificar si un path es válido (helper function)
+   */
+  isValidPath(path: string): boolean {
+    return path && path !== "#" && path !== "" && path !== "javascript:void(0)";
+  }
+
   isMobileMenu() {
     if ($(window).width() > 991) {
       return false;

@@ -70,9 +70,14 @@
 
                 <!-- Menú SIN hijos (menú simple) -->
                 <ng-container *ngIf="!menuItem.children || menuItem.children.length === 0">
-                    <a class="nav-link" [routerLink]="[menuItem.path]" routerLinkActive="active">
+                    <a class="nav-link" [routerLink]="isValidPath(menuItem.path) ? [menuItem.path] : null"
+                        routerLinkActive="active" (click)="handleMenuClick($event, menuItem)"
+                        [style.cursor]="isValidPath(menuItem.path) ? 'pointer' : 'pointer'"
+                        [style.opacity]="isValidPath(menuItem.path) ? '1' : '0.7'">
                         <i class="material-icons">{{menuItem.icon}}</i>
                         <p>{{menuItem.title}}</p>
+                        <small *ngIf="!isValidPath(menuItem.path)"
+                            style="color: #888; font-size: 10px; margin-left: 5px;">(En desarrollo)</small>
                     </a>
                 </ng-container>
 
@@ -82,10 +87,16 @@
                     <div class="nav-link"
                         style="display: flex; align-items: center; justify-content: space-between; padding: 0;">
                         <!-- Parte navegable (texto e icono) -->
-                        <a [routerLink]="[menuItem.path]" routerLinkActive="active"
+                        <a [routerLink]="isValidPath(menuItem.path) ? [menuItem.path] : null" routerLinkActive="active"
+                            (click)="handleMenuClick($event, menuItem)"
+                            [style.opacity]="isValidPath(menuItem.path) ? '1' : '0.7'"
                             style="flex: 1; display: flex; align-items: center; padding: 10px 16px; text-decoration: none; color: inherit;">
                             <i class="material-icons">{{menuItem.icon}}</i>
-                            <p style="margin: 0; margin-left: 15px;">{{menuItem.title}}</p>
+                            <p style="margin: 0; margin-left: 15px;">
+                                {{menuItem.title}}
+                                <small *ngIf="!isValidPath(menuItem.path)"
+                                    style="color: #888; font-size: 10px; margin-left: 5px;">(En desarrollo)</small>
+                            </p>
                         </a>
 
                         <!-- Flecha para toggle (solo expande/colapsa) -->
@@ -102,11 +113,17 @@
                     <div *ngIf="expandedMenus.has(menuItem.menu_id)"
                         style="background-color: rgba(255, 255, 255, 0.05); border-radius: 4px; margin: 5px 0; padding: 5px 0;">
                         <div *ngFor="let child of menuItem.children" class="nav-item" style="padding-left: 30px;">
-                            <a class="nav-link" [routerLink]="[child.path]" routerLinkActive="active"
+                            <a class="nav-link" [routerLink]="isValidPath(child.path) ? [child.path] : null"
+                                routerLinkActive="active" (click)="handleMenuClick($event, child)"
+                                [style.opacity]="isValidPath(child.path) ? '1' : '0.7'"
                                 style="padding: 8px 15px; color: black; display: flex; align-items: center;">
                                 <i class="material-icons"
                                     style="font-size: 16px; margin-right: 10px; color: black;">{{child.icon}}</i>
-                                <p style="margin: 0; font-size: 14px; color: black;">{{child.title}}</p>
+                                <p style="margin: 0; font-size: 14px; color: black;">
+                                    {{child.title}}
+                                    <small *ngIf="!isValidPath(child.path)"
+                                        style="color: #888; font-size: 9px; margin-left: 5px;">(En desarrollo)</small>
+                                </p>
                             </a>
                         </div>
                     </div>
