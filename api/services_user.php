@@ -74,6 +74,7 @@ function save_users($data, $conn)
     $usuario_apellidos = $data['usuario_apellidos'] ?? '';
     $usuario_email = $data['usuario_email'] ?? '';
     $usuario_password = $data['usuario_password'] ?? '';
+    $usuario_password_m5 = md5($usuario_password);
     $usuario_perfil = $data['usuario_perfil'] ?? '';
     $usuario_estado = $data['usuario_estado'] ?? '';
 
@@ -84,11 +85,11 @@ function save_users($data, $conn)
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO usuarios (usuario_nombres, usuario_apellidos, usuario_email, usuarios_password, usuario_perfil, usuario_estado) VALUES (:usuario_nombres, :usuario_apellidos, :usuario_email, :usuario_password, :usuario_perfil, :usuario_estado)");
+        $stmt = $conn->prepare("INSERT INTO usuarios (usuario_nombres, usuario_apellidos, usuario_email, usuario_password, usuario_perfil, usuario_estado) VALUES (:usuario_nombres, :usuario_apellidos, :usuario_email, :usuario_password, :usuario_perfil, :usuario_estado)");
         $stmt->bindParam(':usuario_nombres', $usuario_nombres);
         $stmt->bindParam(':usuario_apellidos', $usuario_apellidos);
         $stmt->bindParam(':usuario_email', $usuario_email);
-        $stmt->bindParam(':usuario_password', md5($usuario_password)); // Encriptar la contraseña
+        $stmt->bindParam(':usuario_password', $usuario_password_m5); // Encriptar la contraseña
         $stmt->bindParam(':usuario_perfil', $usuario_perfil);
         $stmt->bindParam(':usuario_estado', $usuario_estado);
         $stmt->execute();
