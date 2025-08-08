@@ -4,7 +4,10 @@ import { DashboardComponent } from "../../dashboard/dashboard.component";
 import { UsersComponent } from "../../users/users.component";
 import { CategoriesComponent } from "../../categories/categories.component";
 import { ProductsComponent } from "../../products/products.component";
+import { SubcategoriesComponent } from "../../subcategories/subcategories.component";
 import { RegistrarComponent as UserRegistrarComponent } from "../../users/registrar/registrar.component";
+import { RegistrarCategoriaComponent } from "../../categories/registrar/registrar.component";
+import { RegistrarSubcategoriaComponent } from "../../subcategories/registrar/registrar.component";
 import { PermisosComponent } from "../../permisos/permisos.component";
 import { MenusComponent } from "app/menus/menus.component";
 
@@ -14,6 +17,12 @@ export const AdminLayoutRoutes: Routes = [
   { path: "users", component: UsersComponent },
   { path: "users/registrar", component: UserRegistrarComponent },
   { path: "categories", component: CategoriesComponent },
+  { path: "categories/registrar", component: RegistrarCategoriaComponent },
+  { path: "subcategories", component: SubcategoriesComponent },
+  {
+    path: "subcategories/registrar",
+    component: RegistrarSubcategoriaComponent,
+  },
   { path: "products", component: ProductsComponent },
   { path: "menus", component: DashboardComponent },
   { path: "roles", component: DashboardComponent },

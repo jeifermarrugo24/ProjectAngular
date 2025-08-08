@@ -1,0 +1,201 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h3 class="card-title">{{ getFormTitle() }}</h3>
+                    <p class="card-category">{{ getFormSubtitle() }}</p>
+                </div>
+                <div class="card-body">
+                    <!-- Sección de búsqueda -->
+                    <div class="search-section">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Buscar Subcategorías</h4>
+                                <div class="search-container">
+                                    <div class="form-group search-input">
+                                        <label for="searchInput">Buscar por nombre, categoría o estado</label>
+                                        <input id="searchInput" type="text" class="form-control"
+                                            [(ngModel)]="searchTerm" (input)="onSearch($event)"
+                                            placeholder="Escriba para buscar...">
+                                    </div>
+                                    <button type="button" class="btn btn-secondary clear-search" (click)="clearSearch()"
+                                        *ngIf="searchTerm.length > 0">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de registro/edición -->
+                    <div class="form-section">
+                        <form [formGroup]="subcategoriaForm" (ngSubmit)="onSubmit()">
+                            <div class="form-title">
+                                <h4>{{ getFormTitle() }}</h4>
+                                <p class="form-subtitle">{{ getFormSubtitle() }}</p>
+                            </div>
+
+                            <div class="row form-row">
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="subcategoria_nombre">Nombre de la Subcategoría *</label>
+                                        <input id="subcategoria_nombre" type="text" class="form-control"
+                                            formControlName="subcategoria_nombre"
+                                            placeholder="Ej: Smartphones, Tablets, etc."
+                                            [class.is-invalid]="isFieldInvalid('subcategoria_nombre')">
+                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('subcategoria_nombre')">
+                                            El nombre es requerido (mínimo 3 caracteres)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="subcategoria_categoria">Categoría Padre *</label>
+                                        <select id="subcategoria_categoria" class="form-control"
+                                            formControlName="subcategoria_categoria"
+                                            [class.is-invalid]="isFieldInvalid('subcategoria_categoria')">
+                                            <option value="">Seleccione una categoría</option>
+                                            <option *ngFor="let categoria of categoriasList"
+                                                [value]="categoria.categoria_id">
+                                                {{ categoria.categoria_nombre }}
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('subcategoria_categoria')">
+                                            Debe seleccionar una categoría
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row form-row">
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="subcategoria_cantidad_productos">Cantidad de Productos *</label>
+                                        <input id="subcategoria_cantidad_productos" type="number" class="form-control"
+                                            formControlName="subcategoria_cantidad_productos" placeholder="0" min="0"
+                                            [class.is-invalid]="isFieldInvalid('subcategoria_cantidad_productos')">
+                                        <div class="invalid-feedback"
+                                            *ngIf="isFieldInvalid('subcategoria_cantidad_productos')">
+                                            La cantidad debe ser un número válido (0 o mayor)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="subcategoria_estado">Estado *</label>
+                                        <select id="subcategoria_estado" class="form-control"
+                                            formControlName="subcategoria_estado"
+                                            [class.is-invalid]="isFieldInvalid('subcategoria_estado')">
+                                            <option value="">Seleccione un estado</option>
+                                            <option *ngFor="let estado of estados" [value]="estado.value">
+                                                {{ estado.label }}
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('subcategoria_estado')">
+                                            Debe seleccionar un estado
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="subcategoriaForm.invalid || isSubmitting">
+                                    {{ getSubmitButtonText() }}
+                                </button>
+
+                                <button type="button" class="btn btn-warning"
+                                    (click)="isEditMode ? onCancelEdit() : resetForm()">
+                                    {{ getResetButtonText() }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                                    Volver
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Resultados de búsqueda -->
+                    <div class="results-section">
+                        <div class="results-header">
+                            <h4>
+                                Resultados de Subcategorías
+                                <small>({{ searchResults.length }} encontradas)</small>
+                            </h4>
+                            <button type="button" class="btn btn-primary refresh-btn btn-refresh"
+                                (click)="refreshSubcategoriasList()">
+                                Actualizar
+                            </button>
+                        </div>
+
+                        <div *ngIf="searchResults.length === 0" class="no-results">
+                            <p><i class="fa fa-search" style="font-size: 48px; color: #ccc;"></i></p>
+                            <p>No se encontraron subcategorías que coincidan con los criterios de búsqueda.</p>
+                        </div>
+
+                        <div *ngIf="searchResults.length > 0" class="results-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Categoría</th>
+                                            <th>Cantidad Productos</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let subcategoria of searchResults">
+                                            <td>{{ subcategoria.subcategoria_id }}</td>
+                                            <td>
+                                                <strong>{{ subcategoria.subcategoria_nombre }}</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-info category-badge">
+                                                    {{ getCategoryName(subcategoria.subcategoria_categoria) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-warning quantity-badge">
+                                                    {{ subcategoria.subcategoria_cantidad_productos || 0 }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge status-badge" [ngClass]="{
+                            'badge-success status-activo': subcategoria.subcategoria_estado === 'Activo',
+                            'badge-danger status-inactivo': subcategoria.subcategoria_estado === 'Inactivo'
+                          }">
+                                                    {{ subcategoria.subcategoria_estado }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        (click)="editSubcategoria(subcategoria)"
+                                                        title="Editar subcategoría">
+                                                        Editar
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        (click)="deleteSubcategoria(subcategoria.subcategoria_id!)"
+                                                        title="Eliminar subcategoría">
+                                                        Eliminar
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

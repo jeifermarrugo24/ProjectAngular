@@ -73,22 +73,22 @@ function save_subcategories($data, $conn)
     $subcategoria_nombre = $data['subcategoria_nombre'] ?? '';
     $subcategoria_cantidad_productos = $data['subcategoria_cantidad_productos'] ?? 0;
     $subcategoria_estado = $data['subcategoria_estado'] ?? '';
-    $subcategoria_categoria_id = $data['subcategoria_categoria_id'] ?? null;
+    $subcategoria_categoria = $data['subcategoria_categoria'] ?? null;
 
-    if (!$subcategoria_nombre || !$subcategoria_estado || !$subcategoria_categoria_id) {
+    if (!$subcategoria_nombre || !$subcategoria_estado || !$subcategoria_categoria) {
         http_response_code(400);
         echo json_encode(['error' => 'Todos los campos son obligatorios']);
         return;
     }
 
     try {
-        $stmt = $conn->prepare("INSERT INTO subcategorias (subcategoria_nombre, subcategoria_cantidad_productos, subcategoria_estado, subcategoria_categoria_id) 
-            VALUES (:subcategoria_nombre, :subcategoria_cantidad_productos, :subcategoria_estado, :subcategoria_categoria_id)");
-        
+        $stmt = $conn->prepare("INSERT INTO subcategorias (subcategoria_nombre, subcategoria_cantidad_productos, subcategoria_estado, subcategoria_categoria) 
+            VALUES (:subcategoria_nombre, :subcategoria_cantidad_productos, :subcategoria_estado, :subcategoria_categoria)");
+
         $stmt->bindParam(':subcategoria_nombre', $subcategoria_nombre);
         $stmt->bindParam(':subcategoria_cantidad_productos', $subcategoria_cantidad_productos);
         $stmt->bindParam(':subcategoria_estado', $subcategoria_estado);
-        $stmt->bindParam(':subcategoria_categoria_id', $subcategoria_categoria_id);
+        $stmt->bindParam(':subcategoria_categoria', $subcategoria_categoria);
         $stmt->execute();
 
         http_response_code(200);
@@ -114,9 +114,9 @@ function get_subcategories($data, $conn)
         $params[':subcategoria_estado'] = $data['subcategoria_estado'];
     }
 
-    if (!empty($data['subcategoria_categoria_id'])) {
-        $conditions .= " AND subcategoria_categoria_id = :subcategoria_categoria_id";
-        $params[':subcategoria_categoria_id'] = $data['subcategoria_categoria_id'];
+    if (!empty($data['subcategoria_categoria'])) {
+        $conditions .= " AND subcategoria_categoria = :subcategoria_categoria";
+        $params[':subcategoria_categoria'] = $data['subcategoria_categoria'];
     }
 
     if (!empty($data['subcategoria_id'])) {
@@ -180,7 +180,7 @@ function update_subcategories($data, $conn)
     $subcategoria_nombre = $data['subcategoria_nombre'] ?? '';
     $subcategoria_cantidad_productos = $data['subcategoria_cantidad_productos'] ?? 0;
     $subcategoria_estado = $data['subcategoria_estado'] ?? '';
-    $subcategoria_categoria_id = $data['subcategoria_categoria_id'] ?? null;
+    $subcategoria_categoria = $data['subcategoria_categoria'] ?? null;
 
     if ($subcategoria_id <= 0) {
         http_response_code(400);
@@ -193,13 +193,13 @@ function update_subcategories($data, $conn)
             subcategoria_nombre = :subcategoria_nombre, 
             subcategoria_cantidad_productos = :subcategoria_cantidad_productos, 
             subcategoria_estado = :subcategoria_estado, 
-            subcategoria_categoria_id = :subcategoria_categoria_id 
+            subcategoria_categoria = :subcategoria_categoria 
             WHERE subcategoria_id = :subcategoria_id");
-        
+
         $stmt->bindParam(':subcategoria_nombre', $subcategoria_nombre);
         $stmt->bindParam(':subcategoria_cantidad_productos', $subcategoria_cantidad_productos);
         $stmt->bindParam(':subcategoria_estado', $subcategoria_estado);
-        $stmt->bindParam(':subcategoria_categoria_id', $subcategoria_categoria_id);
+        $stmt->bindParam(':subcategoria_categoria', $subcategoria_categoria);
         $stmt->bindParam(':subcategoria_id', $subcategoria_id);
         $stmt->execute();
 

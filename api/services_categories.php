@@ -44,6 +44,10 @@ if (!validar_token($jwt, $token_secreto)) {
 $data = json_decode(file_get_contents("php://input"), true);
 $accion = $_GET['accion'] ?? '';
 
+// Debug temporal
+error_log("Acción recibida: '" . $accion . "'");
+error_log("Datos recibidos: " . json_encode($data));
+
 switch ($accion) {
     case 'guardar':
         save_categories($data, $conn);
@@ -66,12 +70,19 @@ switch ($accion) {
 
 function save_categories($data, $conn)
 {
-    $categoria_nombre = $data['categoria_nombre'] ?? '';
-    $categoria_estado = $data['categoria_estado'] ?? '';
+    $categoria_nombre = trim($data['categoria_nombre'] ?? '');
+    $categoria_estado = trim($data['categoria_estado'] ?? '');
 
-    if (!$categoria_nombre || !$categoria_estado) {
+    if (empty($categoria_nombre) || empty($categoria_estado)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Todos los campos son obligatorios']);
+        echo json_encode([
+            'error' => 'Todos los campos son obligatorios',
+            'received' => [
+                'categoria_nombre' => $categoria_nombre,
+                'categoria_estado' => $categoria_estado,
+                'all_data' => $data
+            ]
+        ]);
         return;
     }
 

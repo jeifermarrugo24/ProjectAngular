@@ -1,0 +1,139 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h3 class="card-title">{{ getFormTitle() }}</h3>
+                    <p class="card-category">{{ getFormSubtitle() }}</p>
+                </div>
+                <div class="card-body">
+                    <!-- Sección de búsqueda -->
+                    <div class="search-section">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Buscar Categorías</h4>
+                                <div class="search-container">
+                                    <div class="form-group search-input">
+                                        <label for="searchInput">Buscar por nombre o estado</label>
+                                        <input id="searchInput" type="text" class="form-control"
+                                            [(ngModel)]="searchTerm" (input)="onSearch($event)"
+                                            placeholder="Escriba para buscar...">
+                                    </div>
+                                    <button type="button" class="btn btn-secondary clear-search" (click)="clearSearch()"
+                                        *ngIf="searchTerm.length > 0">
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de registro/edición -->
+                    <div class="form-section">
+                        <form [formGroup]="categoriaForm" (ngSubmit)="onSubmit()">
+                            <div class="form-title">
+                                <h4>{{ getFormTitle() }}</h4>
+                                <p class="form-subtitle">{{ getFormSubtitle() }}</p>
+                            </div>
+
+                            <div class="row form-row">
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="categoria_nombre">Nombre de la Categoría *</label>
+                                        <input id="categoria_nombre" type="text" class="form-control"
+                                            formControlName="categoria_nombre"
+                                            placeholder="Ej: Electrónicos, Ropa, etc."
+                                            [class.is-invalid]="isFieldInvalid('categoria_nombre')">
+                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('categoria_nombre')">
+                                            El nombre es requerido (mínimo 3 caracteres)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 form-field">
+                                    <div class="form-group">
+                                        <label for="categoria_estado">Estado *</label>
+                                        <select id="categoria_estado" class="form-control"
+                                            formControlName="categoria_estado"
+                                            [class.is-invalid]="isFieldInvalid('categoria_estado')">
+                                            <option value="">Seleccione un estado</option>
+                                            <option *ngFor="let estado of estados" [value]="estado.value">
+                                                {{ estado.label }}
+                                            </option>
+                                        </select>
+                                        <div class="invalid-feedback" *ngIf="isFieldInvalid('categoria_estado')">
+                                            Debe seleccionar un estado
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"
+                                    [disabled]="categoriaForm.invalid || isSubmitting">
+                                    {{ getSubmitButtonText() }}
+                                </button>
+
+                                <button type="button" class="btn btn-warning"
+                                    (click)="isEditMode ? onCancelEdit() : resetForm()">
+                                    {{ getResetButtonText() }}
+                                </button>
+
+                                <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                                    Volver
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tabla de resultados de búsqueda -->
+                    <div class="search-results" *ngIf="searchResults.length > 0">
+                        <h4>Categorías encontradas ({{ searchResults.length }})</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let categoria of searchResults">
+                                        <td>{{ categoria.categoria_id }}</td>
+                                        <td>{{ categoria.categoria_nombre }}</td>
+                                        <td>
+                                            <span class="badge"
+                                                [ngClass]="categoria.categoria_estado === 'A' ? 'badge-success' : 'badge-danger'">
+                                                {{ categoria.categoria_estado === 'A' ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-outline-primary me-2"
+                                                (click)="editCategoria(categoria)" title="Editar">
+                                                ✏️ Editar
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                (click)="deleteCategoria(categoria.categoria_id)" title="Eliminar">
+                                                🗑️ Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje cuando no hay resultados -->
+                    <div class="no-results" *ngIf="searchTerm.length >= 2 && searchResults.length === 0">
+                        <div class="alert alert-info">
+                            <strong>Sin resultados:</strong> No se encontraron categorías que coincidan con "{{
+                            searchTerm }}"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

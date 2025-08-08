@@ -139,17 +139,19 @@
                         <div class="row">
                             <!-- Perfil -->
                             <div class="col-md-6">
-                                <div class="example-full-width">
-                                    <label>Perfil</label>
-                                    <mat-select formControlName="usuario_perfil"
+                                <div class="form-group">
+                                    <label for="usuario_perfil">Perfil *</label>
+                                    <select id="usuario_perfil" class="form-control" formControlName="usuario_perfil"
                                         [class.is-invalid]="isFieldInvalid('usuario_perfil')">
-                                        <mat-option *ngFor="let perfil of perfiles" [value]="perfil.value">
+                                        <option value="">Seleccione un perfil</option>
+                                        <option *ngFor="let perfil of perfiles" [value]="perfil.value">
                                             {{perfil.label}}
-                                        </mat-option>
-                                    </mat-select>
-                                    <mat-error *ngIf="userForm.get('usuario_perfil')?.hasError('required')">
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                        *ngIf="userForm.get('usuario_perfil')?.hasError('required')">
                                         El perfil es requerido
-                                    </mat-error>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -157,18 +159,19 @@
                         <div class="row">
                             <!-- Estado -->
                             <div class="col-md-6">
-                                <div class="example-full-width">
-                                    <label>Estado</label>
-                                    <mat-select formControlName="usuario_estado"
+                                <div class="form-group">
+                                    <label for="usuario_estado">Estado *</label>
+                                    <select id="usuario_estado" class="form-control" formControlName="usuario_estado"
                                         [class.is-invalid]="isFieldInvalid('usuario_estado')">
-                                        <mat-option *ngFor="let estado of estados" [value]="estado.value">
-                                            <mat-icon [ngClass]="estado.icon">{{estado.icon}}</mat-icon>
+                                        <option value="">Seleccione un estado</option>
+                                        <option *ngFor="let estado of estados" [value]="estado.value">
                                             {{estado.label}}
-                                        </mat-option>
-                                    </mat-select>
-                                    <mat-error *ngIf="userForm.get('usuario_estado')?.hasError('required')">
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                        *ngIf="userForm.get('usuario_estado')?.hasError('required')">
                                         El estado es requerido
-                                    </mat-error>
+                                    </div>
                                 </div>
                             </div>
 
